@@ -1,11 +1,12 @@
 module constant
 
 [direct_array_access]
-pub fn parse_utf8_info(bytes []u8, offset int, length u16) !string {
+pub fn parse_utf8_info(bytes []u8, offset int, length int) string {
 	if length == 0 {
 		return ''
 	}
-	mut ret := []u8{len: int(length) / 2, cap: int(length) + 1}
+	mut ret := []u8{cap: length + 1}
+	mut current := offset
 	end := offset + length
 	for i := offset; i < end; i++ {
 		b := bytes[i]
@@ -14,30 +15,43 @@ pub fn parse_utf8_info(bytes []u8, offset int, length u16) !string {
 			if is_high_surrogate(high) {
 				low := read3(bytes, i + 3)
 				if _likely_(is_low_surrogate(low)) {
+					if current < i {
+						unsafe {
+							ret.push_many((&u8(bytes.data)) + current, i - current)
+						}
+						current = i + 6
+					}
 					cp := to_code_point(high, low)
 					ret << (u8(0b11110) + (u8(cp >> 18) & 0b111))
 					ret << (u8(0b10) + (u8(cp >> 12) & 0b111111))
 					ret << (u8(0b10) + (u8(cp >> 6) & 0b111111))
 					ret << (u8(0b10) + (u8(cp) & 0b111111))
-					i += 6
+					i += 5
 					continue
 				}
 			}
 		} else if _unlikely_(b == u8(0xC0) && bytes[i + 1] == u8(0x80)) {
+			if current < i {
+				unsafe {
+					ret.push_many((&u8(bytes.data)) + current, i - current)
+				}
+				current = i + 2
+			}
 			ret << u8(0) // WARNING: potential C interoperability breaking
 			i++
 			continue
 		}
-		ret << b
+	}
+	if current < end - 1 {
+		unsafe {
+			ret.push_many((&u8(bytes.data)) + current, end - 1 - current)
+		}
 	}
 	ret << u8(0) // C interoperability
-	return unsafe { string{
-		str: &ret
-		len: ret.len - 1 // exclude the ending \0
-	} }
+	return unsafe { (&u8(ret.data)).vstring_with_len(ret.len - 1) }
 }
 
-[inline; direct_array_access]
+[direct_array_access; inline]
 fn read3(arr []u8, o int) u16 {
 	return (u16(arr[o] & 0xf) << 12) + (u16(arr[o + 1] & 0x3f) << 6) + u16(arr[o + 2] & 0x3f)
 }
