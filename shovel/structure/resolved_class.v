@@ -33,9 +33,9 @@ pub fn resolve_class(class reader.ClassFile) !ResolvedClass {
 	mut raw_attributes := []reader.RawAttributeInfo{}
 	mut source_file := ?string(none)
 	mut source_debug_extension := ?string(none)
-	mut inner_classes := ?[]attribute.InnerClass{}
+	mut inner_classes := ?[]attribute.InnerClass(none)
 	mut enclosing_method := ?attribute.EnclosingMethod(none)
-	mut bootstrap_methods := ?[]attribute.BootstrapMethod{}
+	mut bootstrap_methods := ?[]attribute.BootstrapMethod(none)
 	pool := class.constant_pool
 	for attr in class.attributes {
 		if attribute_name := pool.get_utf8(attr.attribute_name_index) {

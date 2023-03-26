@@ -22,7 +22,7 @@ pub struct EnclosingMethod {
 	// `constant_pool` table. The `constant_pool` entry at that index must be a
 	// `CONSTANT_Class_info` structure (§4.4.1) representing the **innermost** class that
 	// encloses the declaration of the current class.
-	class constant.ConstantClassInfo
+	class constant.ConstantClassInfo [required]
 	// If the current class is not immediately enclosed by a method or constructor,
 	// then the value of the `method_index` item **must** be zero.
 	//

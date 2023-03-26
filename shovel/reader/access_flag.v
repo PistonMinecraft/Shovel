@@ -18,20 +18,17 @@ pub const (
 	acc_interface    = 0x0200 // class
 	acc_abstract     = 0x0400 // class, method
 	acc_strict       = 0x0800 // method
-	acc_synthetic    = 0x1000 // class, field, method, module
+	acc_synthetic    = 0x1000 // class, field, method, module, module_requires, module_exports, module_opens
 
 	acc_annotation   = 0x2000 // class
 	acc_enum         = 0x4000 // class, field
 
 	acc_module       = 0x8000 // class
-	acc_open         = 0x0020 // module
-	acc_mandated     = 0x8000 // module
 )
 
 pub type ClassAccessFlag = u16
 pub type FieldAccessFlag = u16
 pub type MethodAccessFlag = u16
-pub type ModuleAccessFlag = u16
 pub type CFAccessFlag = ClassAccessFlag | FieldAccessFlag
 pub type FMAccessFlag = FieldAccessFlag | MethodAccessFlag
 pub type CMAccessFlag = ClassAccessFlag | MethodAccessFlag
@@ -140,16 +137,4 @@ pub fn (f CFAccessFlag) is_enum() bool {
 
 pub fn (f ClassAccessFlag) is_module() bool {
 	return (f & reader.acc_module) != 0
-}
-
-pub fn (f ModuleAccessFlag) is_module_synthetic() bool {
-	return (f & reader.acc_synthetic) != 0
-}
-
-pub fn (f ModuleAccessFlag) is_module_open() bool {
-	return (f & reader.acc_open) != 0
-}
-
-pub fn (f ModuleAccessFlag) is_module_mandated() bool {
-	return (f & reader.acc_mandated) != 0
 }
