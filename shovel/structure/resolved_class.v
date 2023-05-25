@@ -13,17 +13,26 @@ type Method = ResolvedMethod | reader.MethodInfo
 [heap]
 pub struct ResolvedClass {
 pub:
-	version                version.ClassVersion       [required]
-	constant_pool          constant.ConstantPool      [required]
-	access_flags           reader.ClassAccessFlag     [required]
-	this_class             string                     [required]
-	super_class            string                     [required]
-	interfaces             ?datatypes.Set[string]
-	raw_attributes         ?[]reader.RawAttributeInfo
-	source_file            ?string
-	source_debug_extension ?string
-	inner_classes          ?[]attribute.InnerClass
-	enclosing_method       ?attribute.EnclosingMethod
+	version                            version.ClassVersion          [required]
+	constant_pool                      constant.ConstantPool         [required]
+	access_flags                       reader.ClassAccessFlag        [required]
+	this_class                         string                        [required]
+	super_class                        string                        [required]
+	interfaces                         ?datatypes.Set[string]
+	raw_attributes                     ?[]reader.RawAttributeInfo
+	source_file                        ?string
+	source_debug_extension             ?string
+	inner_classes                      ?[]attribute.InnerClass
+	enclosing_method                   ?attribute.EnclosingMethod
+	nest_host                          ?constant.ConstantClassInfo
+	nest_members                       ?[]constant.ConstantClassInfo
+	synthetic                          bool
+	deprecated                         bool
+	signature                          ?string // TODO
+	runtime_visible_annotations        []u16   // TODO
+	runtime_invisible_annotations      []u16   // TODO
+	runtime_visible_type_annotations   []u16   // TODO
+	runtime_invisible_type_annotations []u16   // TODO
 mut:
 	fields  map[string]Field             [required]
 	methods map[string]map[string]Method [required]
@@ -36,6 +45,13 @@ pub fn resolve_class(class reader.ClassFile) !ResolvedClass {
 	mut inner_classes := ?[]attribute.InnerClass(none)
 	mut enclosing_method := ?attribute.EnclosingMethod(none)
 	mut bootstrap_methods := ?[]attribute.BootstrapMethod(none)
+	mut nest_host := ?constant.ConstantClassInfo(none)
+	mut nest_members := ?[]constant.ConstantClassInfo(none)
+	mut record := ?[]attribute.RecordComponentInfo(none)
+	mut permitted_subclasses := ?[]constant.ConstantClassInfo(none)
+	mut synthetic := false
+	mut deprecated := false
+	mut signature := ?string(none)
 	pool := class.constant_pool
 	for attr in class.attributes {
 		if attribute_name := pool.get_utf8(attr.attribute_name_index) {
@@ -91,6 +107,57 @@ pub fn resolve_class(class reader.ClassFile) !ResolvedClass {
 							pool) or { return invalid(reader.attr_bootstrap_methods) }
 					} else {
 						return duplicated(reader.attr_bootstrap_methods)
+					}
+				}
+				reader.attr_nest_host {
+					if nest_host == none {
+						if nest_members != none {
+							return conflict(reader.attr_nest_host, reader.attr_nest_members)
+						}
+						nest_host = pool.get_class_info(binary.big_endian_u16(attr.info))
+					} else {
+						return duplicated(reader.attr_nest_host)
+					}
+				}
+				reader.attr_nest_members {
+					if nest_members == none {
+						if nest_host != none {
+							return conflict(reader.attr_nest_host, reader.attr_nest_members)
+						}
+						nest_members = []constant.ConstantClassInfo{len: int(binary.big_endian_u16(attr.info)), init: pool.get_class_info(binary.big_endian_u16_at(attr.info,
+							2 + 2 * index)) or { return invalid(reader.attr_nest_members) }}
+					} else {
+						return duplicated(reader.attr_nest_members)
+					}
+				}
+				reader.attr_record {
+					if record == none {
+						record = attribute.read_record(attr.info, pool) or {
+							return invalid(reader.attr_record)
+						}
+					} else {
+						return duplicated(reader.attr_record)
+					}
+				}
+				reader.attr_permitted_subclasses {
+					if permitted_subclasses == none {
+						permitted_subclasses = []constant.ConstantClassInfo{len: int(binary.big_endian_u16(attr.info)), init: pool.get_class_info(binary.big_endian_u16_at(attr.info,
+							2 + 2 * index)) or { return invalid(reader.attr_permitted_subclasses) }}
+					} else {
+						return duplicated(reader.attr_permitted_subclasses)
+					}
+				}
+				reader.attr_synthetic {
+					synthetic = true
+				}
+				reader.attr_deprecated {
+					attr_deprecated = true
+				}
+				reader.attr_signature {
+					if signature == none {
+						signature = pool.get_utf8(binary.big_endian_u16(attr.info))
+					} else {
+						return duplicated(reader.attr_signature)
 					}
 				}
 				else {

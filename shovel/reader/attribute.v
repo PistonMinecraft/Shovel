@@ -9,6 +9,13 @@ pub const (
 	attr_inner_classes          = 'InnerClasses'
 	attr_enclosing_method       = 'EnclosingMethod'
 	attr_bootstrap_methods      = 'BootstrapMethods'
+	attr_nest_host              = 'NestHost'
+	attr_nest_members           = 'NestMembers'
+	attr_permitted_subclasses   = 'PermittedSubclasses'
+	attr_record                 = 'Record'
+	attr_synthetic              = 'Synthetic'
+	attr_deprecated             = 'Deprecated'
+	attr_signature              = 'Signature'
 	attr_constant_value         = 'ConstantValue'
 )
 

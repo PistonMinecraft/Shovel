@@ -9,3 +9,7 @@ fn duplicated(attr_name string) IError {
 fn invalid(attr_name string) IError {
 	return error('Invalid ${attr_name} attribute')
 }
+
+fn conflict(a string, b string) IError {
+	return error('${a} and ${b} conflicted')
+}
