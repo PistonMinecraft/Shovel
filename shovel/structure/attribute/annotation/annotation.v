@@ -5,19 +5,19 @@ import shovel.reader.constant
 import shovel.structure.types
 
 pub struct Annotation {
-	// The value of the `type_index` item must be a valid index into the
+	// type The value of the `type_index` item must be a valid index into the
 	// `constant_pool` table. The `constant_pool` entry at that index must be
 	// a `CONSTANT_Utf8_info` structure (§4.4.7) representing a field descriptor
 	// (§4.3.2). The field descriptor denotes the type of the annotation represented
 	// by this `annotation` structure.
 	@type string
-	// Each value of the `element_value_pairs` table represents a single element-value
+	// element_value_pairs Each value of the `element_value_pairs` table represents a single element-value
 	// pair in the `annotation` represented by this `annotation` structure
 	element_value_pairs []ElementValuePair
 }
 
 pub struct ElementValuePair {
-	// The value of the `element_name_index` item must be a valid index into
+	// name The value of the `element_name_index` item must be a valid index into
 	// the `constant_pool` table. The `constant_pool` entry at that index must
 	// be a `CONSTANT_Utf8_info` structure (§4.4.7). The `constant_pool`
 	// entry denotes the name of the element of the element-value pair
@@ -26,7 +26,7 @@ pub struct ElementValuePair {
 	// _In other words, the entry denotes an element of the annotation interface specified
 	// by type_index._
 	name string
-	// The value of the `value` item represents the value of the element-value
+	// value The value of the `value` item represents the value of the element-value
 	// pair represented by this `element_value_pairs` entry
 	value ElementValue
 }
@@ -49,14 +49,14 @@ pub struct ConstantValue {
 // The enum_const_value item denotes an enum constant as the value of this
 // element-value pair.
 pub struct EnumConstant {
-	// The value of the `type_name_index` item must be a valid index into the
+	// type_name The value of the `type_name_index` item must be a valid index into the
 	// `constant_pool` table. The `constant_pool` entry at that index must be
 	// a `CONSTANT_Utf8_info` structure (§4.4.7) representing a field descriptor
 	// (§4.3.2). The `constant_pool` entry gives the internal form of the binary
 	// name of the type of the enum constant represented by this `element_value`
 	// structure (§4.2.1).
 	type_name string
-	// The value of the `const_name_index` item must be a valid index into the
+	// const_name The value of the `const_name_index` item must be a valid index into the
 	// `constant_pool` table. The `constant_pool` entry at that index must be a
 	// `CONSTANT_Utf8_info` structure (§4.4.7). The `constant_pool` entry gives
 	// the simple name of the enum constant represented by this `element_value`
@@ -116,7 +116,7 @@ fn read_annotation(info []u8, mut offset &int, pool constant.ConstantPool, unuse
 	t := pool.get_utf8(binary.big_endian_u16_at(info, offset)) or { return none }
 	offset += 2
 	pairs := []ElementValuePair{len: int(binary.big_endian_u16_at(info, offset)), init: read_element_value_pair(info, mut
-		&offset, pool, index) or { return none }}
+		offset, pool, index) or { return none }}
 	return Annotation{
 		@type: t
 		element_value_pairs: pairs
@@ -126,7 +126,7 @@ fn read_annotation(info []u8, mut offset &int, pool constant.ConstantPool, unuse
 fn read_element_value_pair(info []u8, mut offset &int, pool constant.ConstantPool, unused int) ?ElementValuePair {
 	name := pool.get_utf8(binary.big_endian_u16_at(info, offset)) or { return none }
 	offset += 2
-	return ElementValuePair{name, read_element_value(info, mut &offset, pool, 0) or { return none }}
+	return ElementValuePair{name, read_element_value(info, mut offset, pool, 0) or { return none }}
 }
 
 fn read_element_value(info []u8, mut offset &int, pool constant.ConstantPool, unused int) ?ElementValue {
@@ -191,12 +191,12 @@ fn read_element_value(info []u8, mut offset &int, pool constant.ConstantPool, un
 			ElementValue(ClassInfo{value})
 		}
 		annotation.tag_annotation {
-			ElementValue(read_annotation(info, mut &offset, pool, 0) or { return none })
+			ElementValue(read_annotation(info, mut offset, pool, 0) or { return none })
 		}
 		annotation.tag_array {
 			len := int(binary.big_endian_u16_at(info, offset))
 			offset += 2
-			ElementValue([]ElementValue{len: len, init: read_element_value(info, mut &offset,
+			ElementValue([]ElementValue{len: len, init: read_element_value(info, mut offset,
 				pool, index) or { return none }})
 		}
 		else {

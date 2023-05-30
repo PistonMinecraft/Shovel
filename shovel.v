@@ -3,6 +3,7 @@ module main
 // import shovel.reader
 // import shovel.structure
 // import shovel.structure.attribute
+// import shovel.structure.attribute.annotation
 // import shovel.reader.version
 // import shovel.reader.constant
 
