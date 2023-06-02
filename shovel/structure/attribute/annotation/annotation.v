@@ -112,7 +112,7 @@ pub fn read_annotations(info []u8, pool constant.ConstantPool) ?[]Annotation {
 		&off, pool, index) or { return none }}
 }
 
-fn read_annotation(info []u8, mut offset &int, pool constant.ConstantPool, unused int) ?Annotation { // index declared here so that this function wouldn't be called only one time
+fn read_annotation(info []u8, mut offset &int, pool constant.ConstantPool, unused int) ?Annotation { // index declared here so that this function wouldn't be called only one time in array `init`
 	t := pool.get_utf8(binary.big_endian_u16_at(info, offset)) or { return none }
 	offset += 2
 	pairs := []ElementValuePair{len: int(binary.big_endian_u16_at(info, offset)), init: read_element_value_pair(info, mut

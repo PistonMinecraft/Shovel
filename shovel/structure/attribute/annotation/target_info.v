@@ -1,7 +1,6 @@
 module annotation
 
 pub type TargetInfo = CatchTarget
-	| EmptyTarget
 	| FormalParameterTarget
 	| LocalVarTarget
 	| OffsetTarget
@@ -61,8 +60,6 @@ pub struct TypeParameterBoundTarget {
 	bound_index u8
 }
 
-pub const empty_target = EmptyTarget{}
-
 // The `empty_target` item indicates that an annotation appears on either the type
 // in a field declaration, the type in a record component declaration, the return type
 // of a method, the type of a newly constructed object, or the receiver type of a
@@ -70,7 +67,9 @@ pub const empty_target = EmptyTarget{}
 //
 // _Only one type appears in each of these locations, so there is no per-type information to
 // represent in the `target_info` union._
-pub struct EmptyTarget {
+//
+// This struct is unused. Only exists for documentation purpose.
+struct EmptyTarget {
 }
 
 // The `formal_parameter_target` item indicates that an annotation appears on

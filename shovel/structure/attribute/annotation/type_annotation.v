@@ -24,9 +24,17 @@ module annotation
 //}
 // ```
 pub struct TypeAnnotation {
-	target      TargetInfo
-	target_path TypePath
-}
-
-pub struct TypePath {
+	target_type TargetType
+	// target Use `none` to represent the empty_target
+	target      ?TargetInfo
+	target_path ?[]TypePath
+	// type The value of the `type_index` item must be a valid index into the
+	// `constant_pool` table. The `constant_pool` entry at that index must be
+	// a `CONSTANT_Utf8_info` structure (§4.4.7) representing a field descriptor
+	// (§4.3.2). The field descriptor denotes the type of the annotation represented
+	// by this `annotation` structure.
+	@type string
+	// element_value_pairs Each value of the `element_value_pairs` table represents a single element-value
+	// pair in the `annotation` represented by this `annotation` structure
+	element_value_pairs []ElementValuePair
 }
