@@ -1,6 +1,9 @@
 module annotation
 
+import encoding.binary
+
 pub type TargetInfo = CatchTarget
+	| EmptyTarget
 	| FormalParameterTarget
 	| LocalVarTarget
 	| OffsetTarget
@@ -49,6 +52,13 @@ pub struct SuperTypeTarget {
 // _The `type_parameter_bound_target` item records that a bound is annotated, but does
 // not record the type which constitutes the bound. The type may be found by inspecting
 // the class signature or method signature stored in the appropriate `Signature` attribute._
+//
+// ```
+// type_parameter_bound_target {
+//   u1 type_parameter_index;
+//   u1 bound_index;
+// }
+// ```
 pub struct TypeParameterBoundTarget {
 	// type_parameter_index The value of the of `type_parameter_index` item specifies which type parameter
 	// declaration has an annotated bound. A `type_parameter_index` value of `0`
@@ -68,9 +78,14 @@ pub struct TypeParameterBoundTarget {
 // _Only one type appears in each of these locations, so there is no per-type information to
 // represent in the `target_info` union._
 //
-// This struct is unused. Only exists for documentation purpose.
-struct EmptyTarget {
+// ```
+// empty_target {
+// }
+// ```
+pub struct EmptyTarget {
 }
+
+pub const empty_target = EmptyTarget{}
 
 // The `formal_parameter_target` item indicates that an annotation appears on
 // the type in a formal parameter declaration of a method, constructor, or lambda
@@ -81,6 +96,12 @@ struct EmptyTarget {
 // method descriptor, although a `formal_parameter_index` value of 0 does not always
 // indicate the first parameter descriptor in the method descriptor; see the note in §4.7.18
 // for a similar situation involving the `parameter_annotations` table._
+//
+// ```
+// formal_parameter_target {
+//   u1 formal_parameter_index;
+// }
+// ```
 pub struct FormalParameterTarget {
 	// index The value of the `formal_parameter_index` item specifies which formal
 	// parameter declaration has an annotated type. A `formal_parameter_index` value
@@ -91,6 +112,12 @@ pub struct FormalParameterTarget {
 
 // The `throws_target` item indicates that an annotation appears on the _i_'th type in
 // the `throws` clause of a method or constructor declaration.
+//
+// ```
+// throws_target {
+//   u2 throws_type_index;
+// }
+// ```
 pub struct ThrowsTarget {
 	// type_index The value of the `throws_type_index` item is an index into the
 	// `exception_index_table` array of the `Exceptions` attribute of the `method_info`
@@ -121,6 +148,16 @@ pub struct LocalVarTableEntry {
 
 // The `localvar_target` item indicates that an annotation appears on the type in
 // a local variable declaration, including a variable declared as a resource in a `try`-with-resources statement
+//
+// ```
+// localvar_target {
+//   u2 table_length;
+//   { u2 start_pc;
+//     u2 length;
+//     u2 index;
+//   } table[table_length];
+// }
+// ```
 pub struct LocalVarTarget {
 	// table The value of the `table_length` item gives the number of entries in the `table`
 	// array. Each entry indicates a range of `code` array offsets within which a local
@@ -136,6 +173,12 @@ pub struct LocalVarTarget {
 // is a union of types (JLS §14.20). A compiler usually creates one `exception_table`
 // entry for each type in the union, which allows the `catch_target` item to distinguish
 // them. This preserves the correspondence between a type and its annotations._
+//
+// ```
+// catch_target {
+//   u2 exception_table_index;
+// }
+// ```
 pub struct CatchTarget {
 	// exception_table_index The value of the `exception_table_index` item is an index into
 	// the `exception_table` array of the `Code` attribute enclosing the
@@ -146,6 +189,12 @@ pub struct CatchTarget {
 // The `offset_target` item indicates that an annotation appears on either the type
 // in an _instanceof_ expression or a _new_ expression, or the type before the `::` in a
 // method reference expression.
+//
+// ```
+// offset_target {
+//   u2 offset;
+// }
+// ```
 pub struct OffsetTarget {
 	// offset The value of the `offset` item specifies the `code` array offset of either the bytecode
 	// instruction corresponding to the _instanceof_ expression, the _new_ bytecode
@@ -158,6 +207,13 @@ pub struct OffsetTarget {
 // the _i_'th type in a cast expression, or on the _i_'th type argument in the explicit type
 // argument list for any of the following: a _new_ expression, an explicit constructor
 // invocation statement, a method invocation expression, or a method reference expression.
+//
+// ```
+// type_argument_target {
+//   u2 offset;
+//   u1 type_argument_index;
+// }
+// ```
 pub struct TypeArgumentTarget {
 	// offset The value of the `offset` item specifies the `code` array offset of either the
 	// bytecode instruction corresponding to the cast expression, the _new_ bytecode
@@ -177,4 +233,77 @@ pub struct TypeArgumentTarget {
 	// specifies which type argument is annotated. A `type_argument_index` value of
 	// `0` specifies the first type argument.
 	type_argument_index u8
+}
+
+fn read_target_info(info []u8, mut offset &int, target_type TargetType) TargetInfo {
+	return match target_type {
+		.class_type_parameter, .method_type_parameter {
+			type_parameter_index := info[*offset]
+			offset += 1
+			TargetInfo(TypeParameterTarget{type_parameter_index})
+		}
+		.supertype {
+			supertype_index := binary.big_endian_u16_at(info, *offset)
+			offset += 2
+			TargetInfo(SuperTypeTarget{supertype_index})
+		}
+		.class_type_parameter_bound, .method_type_parameter_bound {
+			type_parameter_index := info[*offset]
+			offset += 1
+			bound_index := info[*offset]
+			offset += 1
+			TargetInfo(TypeParameterBoundTarget{type_parameter_index, bound_index})
+		}
+		.field_empty_target, .return_empty_target, .receiver_empty_target {
+			TargetInfo(annotation.empty_target)
+		}
+		.formal_parameter {
+			formal_parameter_index := info[*offset]
+			offset += 1
+			TargetInfo(FormalParameterTarget{formal_parameter_index})
+		}
+		.throws {
+			throws_type_index := binary.big_endian_u16_at(info, *offset)
+			offset += 2
+			TargetInfo(ThrowsTarget{throws_type_index})
+		}
+		.localvar, .resource_localvar {
+			table_length := int(binary.big_endian_u16_at(info, *offset))
+			offset += 2
+			// if info.len - *offset < table_length * 6 {
+			// 	none
+			// }
+			TargetInfo(LocalVarTarget{[]LocalVarTableEntry{len: table_length, init: read_localvar_table_entry(info, mut
+				offset, index)}})
+		}
+		.catch {
+			exception_table_index := binary.big_endian_u16_at(info, *offset)
+			offset += 2
+			TargetInfo(CatchTarget{exception_table_index})
+		}
+		.instanceof_offset, .new_offset, .refnew_offset, .refmethod_offset {
+			off := binary.big_endian_u16_at(info, *offset)
+			offset += 2
+			TargetInfo(OffsetTarget{off})
+		}
+		.cast_type_argument, .new_type_argument, .method_type_argument, .refnew_type_argument,
+		.refmethod_type_argument {
+			off := binary.big_endian_u16_at(info, *offset)
+			offset += 2
+			type_argument_index := info[*offset]
+			offset += 1
+			TargetInfo(TypeArgumentTarget{off, type_argument_index})
+		}
+	}
+}
+
+[inline]
+fn read_localvar_table_entry(info []u8, mut offset &int, unused int) LocalVarTableEntry {
+	start_pc := binary.big_endian_u16_at(info, *offset)
+	offset += 2
+	length := binary.big_endian_u16_at(info, *offset)
+	offset += 2
+	index := binary.big_endian_u16_at(info, *offset)
+	offset += 2
+	return LocalVarTableEntry{start_pc, length, index}
 }

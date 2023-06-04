@@ -11,6 +11,15 @@ pub enum TypePathKind as u8 {
 	type_argument
 }
 
+[inline]
+pub fn parse_type_path_kind(kind u8) ?TypePathKind {
+	if kind <= u8(3) {
+		return unsafe { TypePathKind(kind) }
+	} else {
+		return none
+	}
+}
+
 // ```
 // type_path {
 //   u1 path_length;
@@ -29,4 +38,22 @@ pub struct TypePath {
 	// parameterized type is annotated, where `0` indicates the first type argument
 	// of a parameterized type.
 	type_argument_index u8
+}
+
+pub fn read_type_path(info []u8, mut offset &int) ?[]TypePath {
+	path_length := int(info[*offset])
+	offset += 1
+	if info.len - *offset < path_length * 2 {
+		return none
+	}
+	return []TypePath{len: path_length, init: read_path_entry(info, mut offset, index)?}
+}
+
+[direct_array_access; inline]
+fn read_path_entry(info []u8, mut offset &int, unused int) ?TypePath {
+	type_path_kind := parse_type_path_kind(info[*offset])?
+	offset += 1
+	type_argument_index := info[*offset]
+	offset += 1
+	return TypePath{type_path_kind, type_argument_index}
 }

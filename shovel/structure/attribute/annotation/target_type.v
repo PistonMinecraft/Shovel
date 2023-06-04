@@ -58,3 +58,11 @@ pub enum TargetType as u8 {
 	// refmethod_type_argument type argument for generic method in method reference expression using `::Identifier`
 	refmethod_type_argument
 }
+
+[inline]
+pub fn parse_target_type(target_type u8) ?TargetType {
+	return match target_type {
+		0, 1, 16...23, 64...75 { unsafe { TargetType(target_type) } }
+		else { none }
+	}
+}
