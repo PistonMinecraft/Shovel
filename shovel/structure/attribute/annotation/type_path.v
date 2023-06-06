@@ -40,7 +40,7 @@ pub struct TypePath {
 	type_argument_index u8
 }
 
-pub fn read_type_path(info []u8, mut offset &int) ?[]TypePath {
+fn read_type_path(info []u8, mut offset &int) ?[]TypePath {
 	path_length := int(info[*offset])
 	offset += 1
 	if info.len - *offset < path_length * 2 {

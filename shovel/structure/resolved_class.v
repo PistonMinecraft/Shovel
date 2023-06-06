@@ -5,7 +5,8 @@ import shovel.reader.version
 import shovel.reader
 import encoding.binary
 import shovel.structure.attribute
-import datatypes
+import shovel.structure.attribute.annotation
+import shovel.structure.utils
 
 type Field = ResolvedField | reader.FieldInfo
 type Method = ResolvedMethod | reader.MethodInfo
@@ -18,7 +19,7 @@ pub:
 	access_flags                       reader.ClassAccessFlag        [required]
 	this_class                         string                        [required]
 	super_class                        string                        [required]
-	interfaces                         ?datatypes.Set[string]
+	interfaces                         ?[]string
 	raw_attributes                     ?[]reader.RawAttributeInfo
 	source_file                        ?string
 	source_debug_extension             ?string
@@ -29,10 +30,10 @@ pub:
 	synthetic                          bool
 	deprecated                         bool
 	signature                          ?string // TODO
-	runtime_visible_annotations        []u16   // TODO
-	runtime_invisible_annotations      []u16   // TODO
-	runtime_visible_type_annotations   []u16   // TODO
-	runtime_invisible_type_annotations []u16   // TODO
+	runtime_visible_annotations        ?[]annotation.Annotation
+	runtime_invisible_annotations      ?[]annotation.Annotation
+	runtime_visible_type_annotations   ?[]annotation.TypeAnnotation
+	runtime_invisible_type_annotations ?[]annotation.TypeAnnotation
 mut:
 	fields  map[string]Field             [required]
 	methods map[string]map[string]Method [required]
@@ -52,6 +53,10 @@ pub fn resolve_class(class reader.ClassFile) !ResolvedClass {
 	mut synthetic := false
 	mut deprecated := false
 	mut signature := ?string(none)
+	mut runtime_visible_annotations := ?[]annotation.Annotation(none)
+	mut runtime_invisible_annotations := ?[]annotation.Annotation(none)
+	mut runtime_visible_type_annotations := ?[]annotation.TypeAnnotation(none)
+	mut runtime_invisible_type_annotations := ?[]annotation.TypeAnnotation(none)
 	pool := class.constant_pool
 	for attr in class.attributes {
 		if attribute_name := pool.get_utf8(attr.attribute_name_index) {
@@ -59,7 +64,7 @@ pub fn resolve_class(class reader.ClassFile) !ResolvedClass {
 				reader.attr_source_file {
 					if source_file == none {
 						if attr.info.len != 2 {
-							return invalid(reader.attr_source_file)
+							return utils.invalid_attribute(reader.attr_source_file)
 						}
 						// The string referenced by the `sourcefile_index` item will be interpreted as indicating the
 						// name of the source file from which this `class` file was compiled. It will not be interpreted
@@ -68,24 +73,26 @@ pub fn resolve_class(class reader.ClassFile) !ResolvedClass {
 						// or development tool at the time the file name is actually used.
 						source_file = pool.get_utf8(binary.big_endian_u16(attr.info))
 					} else {
-						return duplicated(reader.attr_source_file)
+						return utils.duplicated_attribute(reader.attr_source_file)
 					}
 				}
 				reader.attr_inner_classes {
 					if inner_classes == none {
 						inner_classes = attribute.read_inner_classes(attr.info, pool) or {
-							return invalid(reader.attr_inner_classes)
+							return utils.invalid_attribute(reader.attr_inner_classes)
 						}
 					} else {
-						return duplicated(reader.attr_inner_classes)
+						return utils.duplicated_attribute(reader.attr_inner_classes)
 					}
 				}
 				reader.attr_enclosing_method {
 					if enclosing_method == none {
 						enclosing_method = attribute.read_enclosing_method(attr.info,
-							pool) or { return invalid(reader.attr_enclosing_method) }
+							pool) or {
+							return utils.invalid_attribute(reader.attr_enclosing_method)
+						}
 					} else {
-						return duplicated(reader.attr_enclosing_method)
+						return utils.duplicated_attribute(reader.attr_enclosing_method)
 					}
 				}
 				reader.attr_source_debug_extension {
@@ -98,66 +105,102 @@ pub fn resolve_class(class reader.ClassFile) !ResolvedClass {
 						source_debug_extension = constant.parse_utf8_info(attr.info, 0,
 							attr.info.len)
 					} else {
-						return duplicated(reader.attr_source_debug_extension)
+						return utils.duplicated_attribute(reader.attr_source_debug_extension)
 					}
 				}
 				reader.attr_bootstrap_methods {
 					if bootstrap_methods == none {
 						bootstrap_methods = attribute.read_bootstrap_methods(attr.info,
-							pool) or { return invalid(reader.attr_bootstrap_methods) }
+							pool) or {
+							return utils.invalid_attribute(reader.attr_bootstrap_methods)
+						}
 					} else {
-						return duplicated(reader.attr_bootstrap_methods)
+						return utils.duplicated_attribute(reader.attr_bootstrap_methods)
 					}
 				}
 				reader.attr_nest_host {
 					if nest_host == none {
 						if nest_members != none {
-							return conflict(reader.attr_nest_host, reader.attr_nest_members)
+							return utils.conflict(reader.attr_nest_host, reader.attr_nest_members)
 						}
 						nest_host = pool.get_class_info(binary.big_endian_u16(attr.info))
 					} else {
-						return duplicated(reader.attr_nest_host)
+						return utils.duplicated_attribute(reader.attr_nest_host)
 					}
 				}
 				reader.attr_nest_members {
 					if nest_members == none {
 						if nest_host != none {
-							return conflict(reader.attr_nest_host, reader.attr_nest_members)
+							return utils.conflict(reader.attr_nest_host, reader.attr_nest_members)
 						}
 						nest_members = []constant.ConstantClassInfo{len: int(binary.big_endian_u16(attr.info)), init: pool.get_class_info(binary.big_endian_u16_at(attr.info,
-							2 + 2 * index)) or { return invalid(reader.attr_nest_members) }}
+							2 + 2 * index)) or {
+							return utils.invalid_attribute(reader.attr_nest_members)
+						}}
 					} else {
-						return duplicated(reader.attr_nest_members)
+						return utils.duplicated_attribute(reader.attr_nest_members)
 					}
 				}
 				reader.attr_record {
 					if record == none {
-						record = attribute.read_record(attr.info, pool) or {
-							return invalid(reader.attr_record)
-						}
+						record = attribute.read_record(attr.info, pool)!
 					} else {
-						return duplicated(reader.attr_record)
+						return utils.duplicated_attribute(reader.attr_record)
 					}
 				}
 				reader.attr_permitted_subclasses {
 					if permitted_subclasses == none {
 						permitted_subclasses = []constant.ConstantClassInfo{len: int(binary.big_endian_u16(attr.info)), init: pool.get_class_info(binary.big_endian_u16_at(attr.info,
-							2 + 2 * index)) or { return invalid(reader.attr_permitted_subclasses) }}
+							2 + 2 * index)) or {
+							return utils.invalid_attribute(reader.attr_permitted_subclasses)
+						}}
 					} else {
-						return duplicated(reader.attr_permitted_subclasses)
+						return utils.duplicated_attribute(reader.attr_permitted_subclasses)
 					}
 				}
 				reader.attr_synthetic {
 					synthetic = true
 				}
 				reader.attr_deprecated {
-					attr_deprecated = true
+					deprecated = true
 				}
 				reader.attr_signature {
 					if signature == none {
 						signature = pool.get_utf8(binary.big_endian_u16(attr.info))
 					} else {
-						return duplicated(reader.attr_signature)
+						return utils.duplicated_attribute(reader.attr_signature)
+					}
+				}
+				reader.attr_runtime_visible_annotations {
+					if runtime_visible_annotations == none {
+						runtime_visible_annotations = annotation.read_annotations(attr.info,
+							pool)
+					} else {
+						return utils.duplicated_attribute(reader.attr_runtime_visible_annotations)
+					}
+				}
+				reader.attr_runtime_invisible_annotations {
+					if runtime_invisible_annotations == none {
+						runtime_invisible_annotations = annotation.read_annotations(attr.info,
+							pool)
+					} else {
+						return utils.duplicated_attribute(reader.attr_runtime_invisible_annotations)
+					}
+				}
+				reader.attr_runtime_visible_type_annotations {
+					if runtime_visible_type_annotations == none {
+						runtime_visible_type_annotations = annotation.read_type_annotations(attr.info,
+							pool)
+					} else {
+						return utils.duplicated_attribute(reader.attr_runtime_visible_type_annotations)
+					}
+				}
+				reader.attr_runtime_invisible_type_annotations {
+					if runtime_invisible_type_annotations == none {
+						runtime_invisible_type_annotations = annotation.read_type_annotations(attr.info,
+							pool)
+					} else {
+						return utils.duplicated_attribute(reader.attr_runtime_invisible_type_annotations)
 					}
 				}
 				else {
@@ -168,5 +211,42 @@ pub fn resolve_class(class reader.ClassFile) !ResolvedClass {
 			raw_attributes << attr
 		}
 	}
-	return error('TODO')
+	mut fields := map[string]Field{}
+	for field in class.fields {
+		fields[pool.get_utf8(field.name_index) or { return utils.invalid_name_index('field') }] = Field(field)
+	}
+	mut methods := map[string]map[string]Method{}
+	for method in class.methods {
+		methods[pool.get_utf8(method.name_index) or { return utils.invalid_name_index('method') }][pool.get_utf8(method.descriptor_index) or {
+			return utils.invalid_name_index('descriptor')
+		}] = Method(method)
+	}
+	return ResolvedClass{
+		version: class.version
+		constant_pool: pool
+		access_flags: class.access_flags
+		this_class: pool.get_utf8(class.this_class) or { return utils.invalid_name_index('class') }
+		super_class: pool.get_utf8(class.super_class) or {
+			return utils.invalid_name_index('class')
+		}
+		interfaces: class.interfaces.map(pool.get_utf8(it) or {
+			return utils.invalid_name_index('interface')
+		})
+		raw_attributes: raw_attributes
+		source_file: source_file
+		source_debug_extension: source_debug_extension
+		inner_classes: inner_classes
+		enclosing_method: enclosing_method
+		nest_host: nest_host
+		nest_members: nest_members
+		synthetic: synthetic
+		deprecated: deprecated
+		signature: signature
+		runtime_visible_annotations: runtime_visible_annotations
+		runtime_invisible_annotations: runtime_invisible_annotations
+		runtime_visible_type_annotations: runtime_visible_type_annotations
+		runtime_invisible_type_annotations: runtime_invisible_type_annotations
+		fields: fields
+		methods: methods
+	}
 }

@@ -1,6 +1,6 @@
 module annotation
 
-import shovel.structure.types
+import shovel.structure.utils
 import encoding.binary
 import shovel.reader.constant
 
@@ -30,7 +30,7 @@ pub type ElementValue = Annotation
 	| string
 
 pub struct ConstantValue {
-	@type types.PrimitiveType
+	@type utils.PrimitiveType
 	value int
 }
 
@@ -107,27 +107,27 @@ fn read_element_value(info []u8, mut offset &int, pool constant.ConstantPool, un
 		annotation.tag_byte {
 			value := pool.get_integer(binary.big_endian_u16_at(info, offset))?
 			offset += 2
-			ElementValue(ConstantValue{types.PrimitiveType.byte, value})
+			ElementValue(ConstantValue{utils.PrimitiveType.byte, value})
 		}
 		annotation.tag_short {
 			value := pool.get_integer(binary.big_endian_u16_at(info, offset))?
 			offset += 2
-			ElementValue(ConstantValue{types.PrimitiveType.short, value})
+			ElementValue(ConstantValue{utils.PrimitiveType.short, value})
 		}
 		annotation.tag_boolean {
 			value := pool.get_integer(binary.big_endian_u16_at(info, offset))?
 			offset += 2
-			ElementValue(ConstantValue{types.PrimitiveType.boolean, value})
+			ElementValue(ConstantValue{utils.PrimitiveType.boolean, value})
 		}
 		annotation.tag_int {
 			value := pool.get_integer(binary.big_endian_u16_at(info, offset))?
 			offset += 2
-			ElementValue(ConstantValue{types.PrimitiveType.int, value})
+			ElementValue(ConstantValue{utils.PrimitiveType.int, value})
 		}
 		annotation.tag_char {
 			value := pool.get_integer(binary.big_endian_u16_at(info, offset))?
 			offset += 2
-			ElementValue(ConstantValue{types.PrimitiveType.char, value})
+			ElementValue(ConstantValue{utils.PrimitiveType.char, value})
 		}
 		annotation.tag_double {
 			value := pool.get_double(binary.big_endian_u16_at(info, offset))?

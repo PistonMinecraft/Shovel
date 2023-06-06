@@ -47,7 +47,7 @@ pub fn read_type_annotations(info []u8, pool constant.ConstantPool) ?[]TypeAnnot
 		&off, pool, index)?}
 }
 
-pub fn read_type_annotation(info []u8, mut offset &int, pool constant.ConstantPool, unused int) ?TypeAnnotation {
+fn read_type_annotation(info []u8, mut offset &int, pool constant.ConstantPool, unused int) ?TypeAnnotation {
 	target_type := parse_target_type(info[*offset])?
 	offset += 1
 	target_info := read_target_info(info, mut offset, target_type)

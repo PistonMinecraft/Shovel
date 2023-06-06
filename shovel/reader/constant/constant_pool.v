@@ -7,9 +7,8 @@ pub:
 	entries []Entry [required]
 }
 
-pub fn read_cp(b []u8, count u16) !(int, ConstantPool) {
+pub fn read_cp(b []u8, count u16, mut offset &int) !ConstantPool {
 	mut entries := []Entry{len: int(count), init: Entry(InvalidConstantInfo{})}
-	mut offset := 10
 
 	for i := u16(1); i < count; i++ {
 		fat, off, info := read_cp_info(b, offset)!
@@ -20,7 +19,7 @@ pub fn read_cp(b []u8, count u16) !(int, ConstantPool) {
 		}
 	}
 
-	return offset, ConstantPool{count, entries}
+	return ConstantPool{count, entries}
 }
 
 pub fn (pool ConstantPool) get_loadable_info(index u16) ?Entry {

@@ -1,4 +1,4 @@
-module types
+module utils
 
 pub enum PrimitiveType {
 	boolean
