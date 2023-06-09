@@ -66,3 +66,13 @@ pub fn (pool ConstantPool) get_method_handle_info(index u16) ?ConstantMethodHand
 	entry := pool.entries[index]
 	return if entry is ConstantMethodHandleInfo { entry } else { none }
 }
+
+pub fn (pool ConstantPool) get_package_info(index u16) ?ConstantPackageInfo {
+	entry := pool.entries[index]
+	return if entry is ConstantPackageInfo { entry } else { none }
+}
+
+pub fn (pool ConstantPool) get_module_info(index u16) ?ConstantModuleInfo {
+	entry := pool.entries[index]
+	return if entry is ConstantModuleInfo { entry } else { none }
+}

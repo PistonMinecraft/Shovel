@@ -7,6 +7,7 @@ import encoding.binary
 import shovel.structure.attribute
 import shovel.structure.attribute.annotation
 import shovel.structure.utils
+import shovel.structure.attribute.modules
 
 type Field = ResolvedField | reader.FieldInfo
 type Method = ResolvedMethod | reader.MethodInfo
@@ -14,19 +15,26 @@ type Method = ResolvedMethod | reader.MethodInfo
 [heap]
 pub struct ResolvedClass {
 pub:
-	version                            version.ClassVersion          [required]
-	constant_pool                      constant.ConstantPool         [required]
-	access_flags                       reader.ClassAccessFlag        [required]
-	this_class                         string                        [required]
-	super_class                        string                        [required]
-	interfaces                         ?[]string
+	version       version.ClassVersion   [required]
+	constant_pool constant.ConstantPool  [required]
+	access_flags  reader.ClassAccessFlag [required]
+	this_class    string                 [required]
+	super_class   string                 [required]
+	interfaces    ?[]string
+
 	raw_attributes                     ?[]reader.RawAttributeInfo
 	source_file                        ?string
 	source_debug_extension             ?string
 	inner_classes                      ?[]attribute.InnerClass
 	enclosing_method                   ?attribute.EnclosingMethod
+	bootstrap_methods                  ?[]attribute.BootstrapMethod
+	mod                                ?modules.Module
+	module_packages                    ?[]constant.ConstantPackageInfo
+	module_main_class                  ?constant.ConstantClassInfo
 	nest_host                          ?constant.ConstantClassInfo
 	nest_members                       ?[]constant.ConstantClassInfo
+	record                             ?[]attribute.RecordComponentInfo
+	permitted_subclasses               ?[]constant.ConstantClassInfo
 	synthetic                          bool
 	deprecated                         bool
 	signature                          ?string // TODO
@@ -46,6 +54,9 @@ pub fn resolve_class(class reader.ClassFile) !ResolvedClass {
 	mut inner_classes := ?[]attribute.InnerClass(none)
 	mut enclosing_method := ?attribute.EnclosingMethod(none)
 	mut bootstrap_methods := ?[]attribute.BootstrapMethod(none)
+	mut mod := ?modules.Module(none)
+	mut module_packages := ?[]constant.ConstantPackageInfo(none)
+	mut module_main_class := ?constant.ConstantClassInfo(none)
 	mut nest_host := ?constant.ConstantClassInfo(none)
 	mut nest_members := ?[]constant.ConstantClassInfo(none)
 	mut record := ?[]attribute.RecordComponentInfo(none)
@@ -116,6 +127,33 @@ pub fn resolve_class(class reader.ClassFile) !ResolvedClass {
 						}
 					} else {
 						return utils.duplicated_attribute(reader.attr_bootstrap_methods)
+					}
+				}
+				reader.attr_module {
+					if mod == none {
+						mod = modules.read_module(attr.info, pool) or {
+							return utils.invalid_attribute(reader.attr_module)
+						}
+					} else {
+						return utils.duplicated_attribute(reader.attr_module)
+					}
+				}
+				reader.attr_module_packages {
+					if module_packages == none {
+						package_count := int(binary.big_endian_u16(attr.info))
+						module_packages = []constant.ConstantPackageInfo{len: package_count, init: pool.get_package_info(binary.big_endian_u16_at(attr.info,
+							2 + 2 * index)) or {
+							return utils.invalid_attribute(reader.attr_module_packages)
+						}}
+					} else {
+						return utils.duplicated_attribute(reader.attr_module_packages)
+					}
+				}
+				reader.attr_module_main_class {
+					if module_main_class == none {
+						module_main_class = pool.get_class_info(binary.big_endian_u16(attr.info))
+					} else {
+						return utils.duplicated_attribute(reader.attr_module_main_class)
 					}
 				}
 				reader.attr_nest_host {
@@ -237,8 +275,14 @@ pub fn resolve_class(class reader.ClassFile) !ResolvedClass {
 		source_debug_extension: source_debug_extension
 		inner_classes: inner_classes
 		enclosing_method: enclosing_method
+		bootstrap_methods: bootstrap_methods
+		mod: mod
+		module_packages: module_packages
+		module_main_class: module_main_class
 		nest_host: nest_host
 		nest_members: nest_members
+		record: record
+		permitted_subclasses: permitted_subclasses
 		synthetic: synthetic
 		deprecated: deprecated
 		signature: signature
