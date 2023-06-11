@@ -4,7 +4,6 @@ import shovel.reader
 
 pub const (
 	acc_open         = 0x0020 // module
-	acc_mandated     = 0x8000 // module, requires, exports, opens
 
 	acc_transitive   = 0x0020 // requires
 	acc_static_phase = 0x0040 // requires
@@ -24,7 +23,7 @@ pub fn (f ModuleAccessFlag) is_module_open() bool {
 
 [inline]
 pub fn (f ModuleAccessFlag) is_module_mandated() bool {
-	return (f & modules.acc_mandated) != 0
+	return (f & reader.acc_mandated) != 0
 }
 
 pub type RequiresAccessFlag = u16
@@ -46,7 +45,7 @@ pub fn (f RequiresAccessFlag) is_requires_static_phase() bool {
 
 [inline]
 pub fn (f RequiresAccessFlag) is_requires_mandated() bool {
-	return (f & modules.acc_mandated) != 0
+	return (f & reader.acc_mandated) != 0
 }
 
 pub type ExportsOpensAccessFlag = u16
@@ -58,5 +57,5 @@ pub fn (f ExportsOpensAccessFlag) is_exports_or_opens_synthetic() bool {
 
 [inline]
 pub fn (f ExportsOpensAccessFlag) is_exports_or_opens_mandated() bool {
-	return (f & modules.acc_mandated) != 0
+	return (f & reader.acc_mandated) != 0
 }

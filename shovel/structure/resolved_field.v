@@ -5,7 +5,6 @@ import shovel.reader.constant
 import shovel.structure.attribute.annotation
 import shovel.structure.utils
 import encoding.binary
-import sync.pool
 
 [heap]
 pub struct ResolvedField {

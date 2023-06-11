@@ -100,7 +100,7 @@ fn read_element_value_pair(info []u8, mut offset &int, pool constant.ConstantPoo
 	return ElementValuePair{name, read_element_value(info, mut offset, pool, 0)?}
 }
 
-fn read_element_value(info []u8, mut offset &int, pool constant.ConstantPool, unused int) ?ElementValue {
+pub fn read_element_value(info []u8, mut offset &int, pool constant.ConstantPool, unused int) ?ElementValue {
 	tag := info[*offset]
 	offset += 1
 	return match tag {

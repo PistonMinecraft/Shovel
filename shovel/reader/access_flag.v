@@ -7,7 +7,7 @@ pub const (
 	acc_protected    = 0x0004 // field, method
 
 	acc_static       = 0x0008 // field, method
-	acc_final        = 0x0010 // class, field, method
+	acc_final        = 0x0010 // class, field, method, method_parameter
 	acc_super        = 0x0020 // class
 	acc_synchronized = 0x0020 // method
 	acc_volatile     = 0x0040 // field
@@ -18,12 +18,13 @@ pub const (
 	acc_interface    = 0x0200 // class
 	acc_abstract     = 0x0400 // class, method
 	acc_strict       = 0x0800 // method
-	acc_synthetic    = 0x1000 // class, field, method, module, module_requires, module_exports, module_opens
+	acc_synthetic    = 0x1000 // class, field, method, module, module_requires, module_exports, module_opens, method_parameter
 
 	acc_annotation   = 0x2000 // class
 	acc_enum         = 0x4000 // class, field
 
 	acc_module       = 0x8000 // class
+	acc_mandated     = 0x8000 // module, module_requires, module_exports, module_opens, method_parameter
 )
 
 pub type ClassAccessFlag = u16
