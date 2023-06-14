@@ -26,11 +26,11 @@ pub fn read_record(info []u8, pool constant.ConstantPool) ![]RecordComponentInfo
 
 fn read_record_component_info(info []u8, mut offset &int, pool constant.ConstantPool, unused int) !RecordComponentInfo {
 	name := pool.get_utf8(binary.big_endian_u16_at(info, offset)) or {
-		return error('record component name absent')
+		return error('record component name is absent')
 	}
 	offset += 2
 	descriptor := pool.get_utf8(binary.big_endian_u16_at(info, offset)) or {
-		return error('record component descriptor absent')
+		return error('record component descriptor is absent')
 	}
 	offset += 2
 	attributes_count := binary.big_endian_u16_at(info, offset)

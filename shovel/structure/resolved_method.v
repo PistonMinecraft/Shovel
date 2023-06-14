@@ -47,7 +47,14 @@ fn resolve_method(method reader.MethodInfo, pool constant.ConstantPool) !Resolve
 	for attr in method.attributes {
 		if attribute_name := pool.get_utf8(attr.attribute_name_index) {
 			match attribute_name {
-				reader.attr_code { // TODO
+				reader.attr_code {
+					if code == none {
+						code = c.read_code(attr.info, pool) or {
+							return utils.invalid_attribute(reader.attr_code)
+						}
+					} else {
+						return utils.duplicated_attribute(reader.attr_code)
+					}
 				}
 				reader.attr_exceptions {
 					if exceptions == none {
