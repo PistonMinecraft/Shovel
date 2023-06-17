@@ -4,7 +4,8 @@ import shovel.reader
 import shovel.structure.attribute.annotation
 import shovel.reader.constant
 import encoding.binary
-import shovel.structure.utils
+import shovel.structure.emsg
+import shovel.utils
 
 // The `Code` attribute is a variable-length attribute in the `attributes` table of
 // a `method_info` structure (§4.6). A `Code` attribute contains the Java Virtual
@@ -109,7 +110,7 @@ pub fn read_code(info []u8, pool constant.ConstantPool) !Code {
 							line_number: binary.big_endian_u16_at(attr.info, 4 + index * 4)
 						}}
 					} else {
-						line_number_table << []LineNumber{len: int(binary.big_endian_u16(attr.info)), init: LineNumber{
+						utils.unwrap(line_number_table) << []LineNumber{len: int(binary.big_endian_u16(attr.info)), init: LineNumber{
 							start_pc: binary.big_endian_u16_at(attr.info, 2 + index * 4)
 							line_number: binary.big_endian_u16_at(attr.info, 4 + index * 4)
 						}}
@@ -130,7 +131,7 @@ pub fn read_code(info []u8, pool constant.ConstantPool) !Code {
 							index: binary.big_endian_u16_at(attr.info, 10 + index * 10)
 						}}
 					} else {
-						local_variable_table << []LocalVariable{len: int(binary.big_endian_u16(attr.info)), init: LocalVariable{
+						utils.unwrap(local_variable_table) << []LocalVariable{len: int(binary.big_endian_u16(attr.info)), init: LocalVariable{
 							start_pc: binary.big_endian_u16_at(attr.info, 2 + index * 10)
 							length: binary.big_endian_u16_at(attr.info, 4 + index * 10)
 							name: pool.get_utf8(binary.big_endian_u16_at(attr.info, 6 + index * 10)) or {
@@ -159,7 +160,7 @@ pub fn read_code(info []u8, pool constant.ConstantPool) !Code {
 							index: binary.big_endian_u16_at(attr.info, 10 + index * 10)
 						}}
 					} else {
-						local_variable_type_table << []LocalVariableType{len: int(binary.big_endian_u16(attr.info)), init: LocalVariableType{
+						utils.unwrap(local_variable_type_table) << []LocalVariableType{len: int(binary.big_endian_u16(attr.info)), init: LocalVariableType{
 							start_pc: binary.big_endian_u16_at(attr.info, 2 + index * 10)
 							length: binary.big_endian_u16_at(attr.info, 4 + index * 10)
 							name: pool.get_utf8(binary.big_endian_u16_at(attr.info, 6 + index * 10)) or {
@@ -177,7 +178,7 @@ pub fn read_code(info []u8, pool constant.ConstantPool) !Code {
 					if stack_map_table == none {
 						stack_map_table = read_stack_map_table(attr.info, pool)
 					} else {
-						return utils.duplicated_attribute(reader.attr_stack_map_table)
+						return emsg.duplicated_attribute(reader.attr_stack_map_table)
 					}
 				}
 				reader.attr_runtime_visible_type_annotations {
@@ -185,7 +186,7 @@ pub fn read_code(info []u8, pool constant.ConstantPool) !Code {
 						runtime_visible_type_annotations = annotation.read_type_annotations(attr.info,
 							pool)
 					} else {
-						return utils.duplicated_attribute(reader.attr_runtime_visible_type_annotations)
+						return emsg.duplicated_attribute(reader.attr_runtime_visible_type_annotations)
 					}
 				}
 				reader.attr_runtime_invisible_type_annotations {
@@ -193,7 +194,7 @@ pub fn read_code(info []u8, pool constant.ConstantPool) !Code {
 						runtime_invisible_type_annotations = annotation.read_type_annotations(attr.info,
 							pool)
 					} else {
-						return utils.duplicated_attribute(reader.attr_runtime_invisible_type_annotations)
+						return emsg.duplicated_attribute(reader.attr_runtime_invisible_type_annotations)
 					}
 				}
 				else {

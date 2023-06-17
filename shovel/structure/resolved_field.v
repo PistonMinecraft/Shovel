@@ -3,8 +3,8 @@ module structure
 import shovel.reader
 import shovel.reader.constant
 import shovel.structure.attribute.annotation
-import shovel.structure.utils
 import encoding.binary
+import shovel.structure.emsg
 
 [heap]
 pub struct ResolvedField {
@@ -40,7 +40,7 @@ fn resolve_field(field reader.FieldInfo, pool constant.ConstantPool) !ResolvedFi
 					if constant_value == none {
 						constant_value = pool.get_loadable_info(binary.big_endian_u16(attr.info))
 					} else {
-						return utils.duplicated_attribute(reader.attr_constant_value)
+						return emsg.duplicated_attribute(reader.attr_constant_value)
 					}
 				}
 				reader.attr_synthetic {
@@ -53,7 +53,7 @@ fn resolve_field(field reader.FieldInfo, pool constant.ConstantPool) !ResolvedFi
 					if signature == none {
 						signature = pool.get_utf8(binary.big_endian_u16(attr.info))
 					} else {
-						return utils.duplicated_attribute(reader.attr_signature)
+						return emsg.duplicated_attribute(reader.attr_signature)
 					}
 				}
 				reader.attr_runtime_visible_annotations {
@@ -61,7 +61,7 @@ fn resolve_field(field reader.FieldInfo, pool constant.ConstantPool) !ResolvedFi
 						runtime_visible_annotations = annotation.read_annotations(attr.info,
 							pool)
 					} else {
-						return utils.duplicated_attribute(reader.attr_runtime_visible_annotations)
+						return emsg.duplicated_attribute(reader.attr_runtime_visible_annotations)
 					}
 				}
 				reader.attr_runtime_invisible_annotations {
@@ -69,7 +69,7 @@ fn resolve_field(field reader.FieldInfo, pool constant.ConstantPool) !ResolvedFi
 						runtime_invisible_annotations = annotation.read_annotations(attr.info,
 							pool)
 					} else {
-						return utils.duplicated_attribute(reader.attr_runtime_invisible_annotations)
+						return emsg.duplicated_attribute(reader.attr_runtime_invisible_annotations)
 					}
 				}
 				reader.attr_runtime_visible_type_annotations {
@@ -77,7 +77,7 @@ fn resolve_field(field reader.FieldInfo, pool constant.ConstantPool) !ResolvedFi
 						runtime_visible_type_annotations = annotation.read_type_annotations(attr.info,
 							pool)
 					} else {
-						return utils.duplicated_attribute(reader.attr_runtime_visible_type_annotations)
+						return emsg.duplicated_attribute(reader.attr_runtime_visible_type_annotations)
 					}
 				}
 				reader.attr_runtime_invisible_type_annotations {
@@ -85,7 +85,7 @@ fn resolve_field(field reader.FieldInfo, pool constant.ConstantPool) !ResolvedFi
 						runtime_invisible_type_annotations = annotation.read_type_annotations(attr.info,
 							pool)
 					} else {
-						return utils.duplicated_attribute(reader.attr_runtime_invisible_type_annotations)
+						return emsg.duplicated_attribute(reader.attr_runtime_invisible_type_annotations)
 					}
 				}
 				else {
@@ -98,9 +98,9 @@ fn resolve_field(field reader.FieldInfo, pool constant.ConstantPool) !ResolvedFi
 	}
 	return ResolvedField{
 		access_flags: field.access_flags
-		name: pool.get_utf8(field.name_index) or { return utils.invalid_name_index('field') }
+		name: pool.get_utf8(field.name_index) or { return emsg.invalid_name_index('field') }
 		descriptor: pool.get_utf8(field.descriptor_index) or {
-			return utils.invalid_name_index('field descriptor')
+			return emsg.invalid_name_index('field descriptor')
 		}
 		raw_attributes: raw_attributes
 		constant_value: constant_value

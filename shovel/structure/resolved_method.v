@@ -4,9 +4,9 @@ import shovel.reader
 import shovel.structure.attribute.code as c
 import shovel.reader.constant
 import shovel.structure.attribute.annotation
-import shovel.structure.utils
 import encoding.binary
 import shovel.structure.attribute
+import shovel.structure.emsg
 
 pub struct ResolvedMethod { // method_info
 	access_flags reader.MethodAccessFlag [required]
@@ -50,20 +50,20 @@ fn resolve_method(method reader.MethodInfo, pool constant.ConstantPool) !Resolve
 				reader.attr_code {
 					if code == none {
 						code = c.read_code(attr.info, pool) or {
-							return utils.invalid_attribute(reader.attr_code)
+							return emsg.invalid_attribute(reader.attr_code)
 						}
 					} else {
-						return utils.duplicated_attribute(reader.attr_code)
+						return emsg.duplicated_attribute(reader.attr_code)
 					}
 				}
 				reader.attr_exceptions {
 					if exceptions == none {
 						exceptions = []constant.ConstantClassInfo{len: int(binary.big_endian_u16(attr.info)), init: pool.get_class_info(binary.big_endian_u16_at(attr.info,
 							2 + index * 2)) or {
-							return utils.invalid_attribute(reader.attr_exceptions)
+							return emsg.invalid_attribute(reader.attr_exceptions)
 						}}
 					} else {
-						return utils.duplicated_attribute(reader.attr_exceptions)
+						return emsg.duplicated_attribute(reader.attr_exceptions)
 					}
 				}
 				reader.attr_runtime_visible_parameter_annotations {
@@ -71,10 +71,10 @@ fn resolve_method(method reader.MethodInfo, pool constant.ConstantPool) !Resolve
 						mut off := 1
 						runtime_visible_parameter_annotations = [][]annotation.Annotation{len: int(attr.info[0]), init: annotation.read_annotations_at(attr.info,
 							pool, mut &off, index) or {
-							return utils.invalid_attribute(reader.attr_runtime_visible_parameter_annotations)
+							return emsg.invalid_attribute(reader.attr_runtime_visible_parameter_annotations)
 						}}
 					} else {
-						return utils.duplicated_attribute(reader.attr_runtime_visible_parameter_annotations)
+						return emsg.duplicated_attribute(reader.attr_runtime_visible_parameter_annotations)
 					}
 				}
 				reader.attr_runtime_invisible_parameter_annotations {
@@ -82,10 +82,10 @@ fn resolve_method(method reader.MethodInfo, pool constant.ConstantPool) !Resolve
 						mut off := 1
 						runtime_invisible_parameter_annotations = [][]annotation.Annotation{len: int(attr.info[0]), init: annotation.read_annotations_at(attr.info,
 							pool, mut &off, index) or {
-							return utils.invalid_attribute(reader.attr_runtime_invisible_parameter_annotations)
+							return emsg.invalid_attribute(reader.attr_runtime_invisible_parameter_annotations)
 						}}
 					} else {
-						return utils.duplicated_attribute(reader.attr_runtime_invisible_parameter_annotations)
+						return emsg.duplicated_attribute(reader.attr_runtime_invisible_parameter_annotations)
 					}
 				}
 				reader.attr_annotation_default {
@@ -94,7 +94,7 @@ fn resolve_method(method reader.MethodInfo, pool constant.ConstantPool) !Resolve
 						annotation_default = annotation.read_element_value(attr.info, mut
 							&off, pool, 0)
 					} else {
-						return utils.duplicated_attribute(reader.attr_annotation_default)
+						return emsg.duplicated_attribute(reader.attr_annotation_default)
 					}
 				}
 				reader.attr_method_parameters {
@@ -105,7 +105,7 @@ fn resolve_method(method reader.MethodInfo, pool constant.ConstantPool) !Resolve
 								3 + index * 4))
 						}}
 					} else {
-						return utils.duplicated_attribute(reader.attr_method_parameters)
+						return emsg.duplicated_attribute(reader.attr_method_parameters)
 					}
 				}
 				reader.attr_synthetic {
@@ -118,7 +118,7 @@ fn resolve_method(method reader.MethodInfo, pool constant.ConstantPool) !Resolve
 					if signature == none {
 						signature = pool.get_utf8(binary.big_endian_u16(attr.info))
 					} else {
-						return utils.duplicated_attribute(reader.attr_signature)
+						return emsg.duplicated_attribute(reader.attr_signature)
 					}
 				}
 				reader.attr_runtime_visible_annotations {
@@ -126,7 +126,7 @@ fn resolve_method(method reader.MethodInfo, pool constant.ConstantPool) !Resolve
 						runtime_visible_annotations = annotation.read_annotations(attr.info,
 							pool)
 					} else {
-						return utils.duplicated_attribute(reader.attr_runtime_visible_annotations)
+						return emsg.duplicated_attribute(reader.attr_runtime_visible_annotations)
 					}
 				}
 				reader.attr_runtime_invisible_annotations {
@@ -134,7 +134,7 @@ fn resolve_method(method reader.MethodInfo, pool constant.ConstantPool) !Resolve
 						runtime_invisible_annotations = annotation.read_annotations(attr.info,
 							pool)
 					} else {
-						return utils.duplicated_attribute(reader.attr_runtime_invisible_annotations)
+						return emsg.duplicated_attribute(reader.attr_runtime_invisible_annotations)
 					}
 				}
 				reader.attr_runtime_visible_type_annotations {
@@ -142,7 +142,7 @@ fn resolve_method(method reader.MethodInfo, pool constant.ConstantPool) !Resolve
 						runtime_visible_type_annotations = annotation.read_type_annotations(attr.info,
 							pool)
 					} else {
-						return utils.duplicated_attribute(reader.attr_runtime_visible_type_annotations)
+						return emsg.duplicated_attribute(reader.attr_runtime_visible_type_annotations)
 					}
 				}
 				reader.attr_runtime_invisible_type_annotations {
@@ -150,7 +150,7 @@ fn resolve_method(method reader.MethodInfo, pool constant.ConstantPool) !Resolve
 						runtime_invisible_type_annotations = annotation.read_type_annotations(attr.info,
 							pool)
 					} else {
-						return utils.duplicated_attribute(reader.attr_runtime_invisible_type_annotations)
+						return emsg.duplicated_attribute(reader.attr_runtime_invisible_type_annotations)
 					}
 				}
 				else {
@@ -163,9 +163,9 @@ fn resolve_method(method reader.MethodInfo, pool constant.ConstantPool) !Resolve
 	}
 	return ResolvedMethod{
 		access_flags: method.access_flags
-		name: pool.get_utf8(method.name_index) or { return utils.invalid_name_index('method') }
+		name: pool.get_utf8(method.name_index) or { return emsg.invalid_name_index('method') }
 		descriptor: pool.get_utf8(method.descriptor_index) or {
-			return utils.invalid_name_index('method descriptor')
+			return emsg.invalid_name_index('method descriptor')
 		}
 		raw_attributes: raw_attributes
 		code: code

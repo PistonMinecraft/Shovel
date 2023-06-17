@@ -1,4 +1,4 @@
-module utils
+module emsg
 
 [inline]
 pub fn duplicated_attribute(attr_name string) IError {

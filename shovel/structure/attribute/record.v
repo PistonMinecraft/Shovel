@@ -3,8 +3,8 @@ module attribute
 import shovel.reader
 import shovel.reader.constant
 import encoding.binary
-import shovel.structure.utils
 import shovel.structure.attribute.annotation
+import shovel.structure.emsg
 
 pub struct RecordComponentInfo {
 	name       string [required]
@@ -49,7 +49,7 @@ fn read_record_component_info(info []u8, mut offset &int, pool constant.Constant
 					if signature == none {
 						signature = pool.get_utf8(binary.big_endian_u16(attr.info))
 					} else {
-						return utils.duplicated_attribute(reader.attr_signature)
+						return emsg.duplicated_attribute(reader.attr_signature)
 					}
 				}
 				reader.attr_runtime_visible_annotations {
@@ -57,7 +57,7 @@ fn read_record_component_info(info []u8, mut offset &int, pool constant.Constant
 						runtime_visible_annotations = annotation.read_annotations(attr.info,
 							pool)
 					} else {
-						return utils.duplicated_attribute(reader.attr_runtime_visible_annotations)
+						return emsg.duplicated_attribute(reader.attr_runtime_visible_annotations)
 					}
 				}
 				reader.attr_runtime_invisible_annotations {
@@ -65,7 +65,7 @@ fn read_record_component_info(info []u8, mut offset &int, pool constant.Constant
 						runtime_invisible_annotations = annotation.read_annotations(attr.info,
 							pool)
 					} else {
-						return utils.duplicated_attribute(reader.attr_runtime_invisible_annotations)
+						return emsg.duplicated_attribute(reader.attr_runtime_invisible_annotations)
 					}
 				}
 				reader.attr_runtime_visible_type_annotations {
@@ -73,7 +73,7 @@ fn read_record_component_info(info []u8, mut offset &int, pool constant.Constant
 						runtime_visible_type_annotations = annotation.read_type_annotations(attr.info,
 							pool)
 					} else {
-						return utils.duplicated_attribute(reader.attr_runtime_visible_type_annotations)
+						return emsg.duplicated_attribute(reader.attr_runtime_visible_type_annotations)
 					}
 				}
 				reader.attr_runtime_invisible_type_annotations {
@@ -81,7 +81,7 @@ fn read_record_component_info(info []u8, mut offset &int, pool constant.Constant
 						runtime_invisible_type_annotations = annotation.read_type_annotations(attr.info,
 							pool)
 					} else {
-						return utils.duplicated_attribute(reader.attr_runtime_invisible_type_annotations)
+						return emsg.duplicated_attribute(reader.attr_runtime_invisible_type_annotations)
 					}
 				}
 				else {
