@@ -34,7 +34,7 @@ pub struct BootstrapMethod {
 	bootstrap_arguments  ?[]constant.Entry // constant.is_loadable(element) must be true for each `element`
 }
 
-[direct_array_access]
+@[direct_array_access]
 pub fn read_bootstrap_methods(info []u8, pool constant.ConstantPool) ?[]BootstrapMethod {
 	mut ret := []BootstrapMethod{cap: int(binary.big_endian_u16(info))}
 	unsafe { ret.flags.set(.nogrow) }

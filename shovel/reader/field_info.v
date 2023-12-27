@@ -4,10 +4,10 @@ import encoding.binary
 
 pub struct FieldInfo {
 pub: // field_info
-	access_flags     FieldAccessFlag    [required]
-	name_index       u16                [required]
-	descriptor_index u16                [required]
-	attributes       []RawAttributeInfo [required]
+	access_flags     FieldAccessFlag    @[required]
+	name_index       u16                @[required]
+	descriptor_index u16                @[required]
+	attributes       []RawAttributeInfo @[required]
 }
 
 pub fn read_field_info(b []u8, count u16, mut offset &int) []FieldInfo {

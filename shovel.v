@@ -1,6 +1,6 @@
 module main
 
-// import shovel.decompiler
+import shovel.decompiler
 // import shovel.reader
 // import shovel.reader.constant
 // import shovel.reader.version

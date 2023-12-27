@@ -11,7 +11,7 @@ pub enum TypePathKind as u8 {
 	type_argument
 }
 
-[inline]
+@[inline]
 pub fn parse_type_path_kind(kind u8) ?TypePathKind {
 	if kind <= u8(3) {
 		return unsafe { TypePathKind(kind) }
@@ -49,7 +49,7 @@ fn read_type_path(info []u8, mut offset &int) ?[]TypePath {
 	return []TypePath{len: path_length, init: read_path_entry(info, mut offset, index)?}
 }
 
-[direct_array_access; inline]
+@[direct_array_access; inline]
 fn read_path_entry(info []u8, mut offset &int, unused int) ?TypePath {
 	type_path_kind := parse_type_path_kind(info[*offset])?
 	offset += 1

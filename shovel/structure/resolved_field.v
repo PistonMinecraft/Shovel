@@ -6,11 +6,11 @@ import shovel.structure.attribute.annotation
 import encoding.binary
 import shovel.structure.emsg
 
-[heap]
+@[heap]
 pub struct ResolvedField {
-	access_flags reader.FieldAccessFlag [required]
-	name         string                 [required]
-	descriptor   string                 [required]
+	access_flags reader.FieldAccessFlag @[required]
+	name         string                 @[required]
+	descriptor   string                 @[required]
 
 	raw_attributes                     ?[]reader.RawAttributeInfo
 	constant_value                     ?constant.Entry

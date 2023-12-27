@@ -77,21 +77,19 @@ pub struct ClassInfo {
 	class_info string
 }
 
-pub const (
-	tag_byte       = u8(`B`)
-	tag_char       = u8(`C`)
-	tag_double     = u8(`D`)
-	tag_float      = u8(`F`)
-	tag_int        = u8(`I`)
-	tag_long       = u8(`J`)
-	tag_short      = u8(`S`)
-	tag_boolean    = u8(`Z`)
-	tag_string     = u8(`s`)
-	tag_enum       = u8(`e`)
-	tag_class      = u8(`c`)
-	tag_annotation = u8(`@`)
-	tag_array      = u8(`[`)
-)
+pub const tag_byte = u8(`B`)
+pub const tag_char = u8(`C`)
+pub const tag_double = u8(`D`)
+pub const tag_float = u8(`F`)
+pub const tag_int = u8(`I`)
+pub const tag_long = u8(`J`)
+pub const tag_short = u8(`S`)
+pub const tag_boolean = u8(`Z`)
+pub const tag_string = u8(`s`)
+pub const tag_enum = u8(`e`)
+pub const tag_class = u8(`c`)
+pub const tag_annotation = u8(`@`)
+pub const tag_array = u8(`[`)
 
 fn read_element_value_pair(info []u8, mut offset &int, pool constant.ConstantPool, unused int) ?ElementValuePair { // index declared here so that this function wouldn't be called only one time in array `init`
 	name := pool.get_utf8(binary.big_endian_u16_at(info, offset))?

@@ -4,10 +4,10 @@ import encoding.binary
 
 pub struct MethodInfo {
 pub: // method_info
-	access_flags     MethodAccessFlag   [required]
-	name_index       u16                [required]
-	descriptor_index u16                [required]
-	attributes       []RawAttributeInfo [required]
+	access_flags     MethodAccessFlag   @[required]
+	name_index       u16                @[required]
+	descriptor_index u16                @[required]
+	attributes       []RawAttributeInfo @[required]
 }
 
 pub fn read_method_info(b []u8, count u16, mut offset &int) []MethodInfo {

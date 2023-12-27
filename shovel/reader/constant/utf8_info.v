@@ -1,6 +1,6 @@
 module constant
 
-[direct_array_access]
+@[direct_array_access]
 pub fn parse_utf8_info(bytes []u8, offset int, length int) string {
 	if length == 0 {
 		return ''
@@ -51,24 +51,24 @@ pub fn parse_utf8_info(bytes []u8, offset int, length int) string {
 	return unsafe { (&u8(ret.data)).vstring_with_len(ret.len - 1) }
 }
 
-[direct_array_access; inline]
+@[direct_array_access; inline]
 fn read3(arr []u8, o int) u16 {
 	return (u16(arr[o] & 0xf) << 12) + (u16(arr[o + 1] & 0x3f) << 6) + u16(arr[o + 2] & 0x3f)
 }
 
 // ported from Character.java
 
-[inline]
+@[inline]
 fn is_high_surrogate(c u16) bool {
 	return c >= 0xD800 && c <= 0xDBFF
 }
 
-[inline]
+@[inline]
 fn is_low_surrogate(c u16) bool {
 	return c >= 0xDC00 && c <= 0xDFFF
 }
 
-[inline]
+@[inline]
 fn to_code_point(high u16, low u16) u32 {
 	// MIN_SUPPLEMENTARY_CODE_POINT = 0x010000
 	// MIN_HIGH_SURROGATE = '\uD800'

@@ -12,14 +12,14 @@ import shovel.structure.emsg
 type Field = ResolvedField | reader.FieldInfo
 type Method = ResolvedMethod | reader.MethodInfo
 
-[heap]
+@[heap]
 pub struct ResolvedClass {
 pub:
-	version       version.ClassVersion   [required]
-	constant_pool constant.ConstantPool  [required]
-	access_flags  reader.ClassAccessFlag [required]
-	this_class    string                 [required]
-	super_class   string                 [required]
+	version       version.ClassVersion   @[required]
+	constant_pool constant.ConstantPool  @[required]
+	access_flags  reader.ClassAccessFlag @[required]
+	this_class    string                 @[required]
+	super_class   string                 @[required]
 	interfaces    ?[]string
 
 	raw_attributes                     ?[]reader.RawAttributeInfo
@@ -43,8 +43,8 @@ pub:
 	runtime_visible_type_annotations   ?[]annotation.TypeAnnotation
 	runtime_invisible_type_annotations ?[]annotation.TypeAnnotation
 mut:
-	fields  map[string]Field             [required]
-	methods map[string]map[string]Method [required]
+	fields  map[string]Field             @[required]
+	methods map[string]map[string]Method @[required]
 }
 
 pub fn resolve_class(class reader.ClassFile) !ResolvedClass {
@@ -291,5 +291,19 @@ pub fn resolve_class(class reader.ClassFile) !ResolvedClass {
 	}
 }
 
-pub fn (r &ResolvedClass) resolve_all_members() {
+pub fn (mut r ResolvedClass) resolve_all_members() {
+	for k, v in r.fields {
+		if v is reader.FieldInfo {
+			r.fields[k] = resolve_field(v, r.constant_pool) or { panic('Unable to resolve field') } // TODO: better error handling
+		}
+	}
+	for n, dm in r.methods {
+		for d, v in dm {
+			if v is reader.MethodInfo {
+				r.methods[n][d] = resolve_method(v, r.constant_pool) or {
+					panic('Unable to resolve method')
+				} // TODO: better error handling
+			}
+		}
+	}
 }

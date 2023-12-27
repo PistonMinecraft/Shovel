@@ -25,9 +25,9 @@ pub enum MajorVersion as u16 {
 	v20
 }
 
-[inline]
+@[inline]
 pub fn parse_major(major_version u16) ?MajorVersion {
-	if major_version >= u16(MajorVersion.v1_1) && major_version <= u16(latest_major) {
+	if major_version >= u16(MajorVersion.v1_1) && major_version <= u16(version.latest_major) {
 		return unsafe { MajorVersion(major_version) }
 	}
 	return none

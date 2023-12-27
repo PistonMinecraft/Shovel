@@ -36,7 +36,7 @@ import shovel.utils
 //   attribute_info attributes[attributes_count];
 // }
 // ```
-[heap]
+@[heap]
 pub struct Code {
 	// max_stack The value of the `max_stack` item gives the maximum depth of the operand
 	// stack of this method (§2.6.2) at any point during execution of the method.

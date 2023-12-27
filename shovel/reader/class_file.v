@@ -6,18 +6,18 @@ import shovel.reader.constant
 
 pub const magic = u32(0xCAFEBABE)
 
-[heap]
+@[heap]
 pub struct ClassFile {
 pub:
-	version       version.ClassVersion  [required]
-	constant_pool constant.ConstantPool [required]
-	access_flags  ClassAccessFlag       [required]
-	this_class    u16                   [required]
-	super_class   u16                   [required]
-	interfaces    []u16                 [required]
-	fields        []FieldInfo           [required]
-	methods       []MethodInfo          [required]
-	attributes    []RawAttributeInfo    [required]
+	version       version.ClassVersion  @[required]
+	constant_pool constant.ConstantPool @[required]
+	access_flags  ClassAccessFlag       @[required]
+	this_class    u16                   @[required]
+	super_class   u16                   @[required]
+	interfaces    []u16                 @[required]
+	fields        []FieldInfo           @[required]
+	methods       []MethodInfo          @[required]
+	attributes    []RawAttributeInfo    @[required]
 }
 
 pub fn read(b []u8) !ClassFile {

@@ -297,7 +297,7 @@ fn read_target_info(info []u8, mut offset &int, target_type TargetType) TargetIn
 	}
 }
 
-[inline]
+@[inline]
 fn read_localvar_table_entry(info []u8, mut offset &int, unused int) LocalVarTableEntry {
 	start_pc := binary.big_endian_u16_at(info, *offset)
 	offset += 2

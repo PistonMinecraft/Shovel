@@ -10,7 +10,7 @@ pub enum TargetType as u8 {
 	// supertype type in extends or implements clause of class declaration (including the direct superclass or
 	// direct superinterface of an anonymous class declaration), or in extends clause of interface declaration
 	// Appears in: ClassFile
-	supertype = 0x10
+	supertype                   = 0x10
 	// class_type_parameter_bound type in bound of type parameter declaration of generic class or interface
 	// Appears in: ClassFile
 	class_type_parameter_bound
@@ -34,7 +34,7 @@ pub enum TargetType as u8 {
 	throws
 	// All below appear in: Code
 	// localvar type in local variable declaration
-	localvar = 0x40
+	localvar                    = 0x40
 	// resource_localvar type in resource variable declaration
 	resource_localvar
 	// catch type in exception parameter declaration
@@ -59,7 +59,7 @@ pub enum TargetType as u8 {
 	refmethod_type_argument
 }
 
-[inline]
+@[inline]
 pub fn parse_target_type(target_type u8) ?TargetType {
 	return match target_type {
 		0, 1, 16...23, 64...75 { unsafe { TargetType(target_type) } }

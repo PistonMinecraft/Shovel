@@ -7,8 +7,8 @@ import shovel.structure.attribute.annotation
 import shovel.structure.emsg
 
 pub struct RecordComponentInfo {
-	name       string [required]
-	descriptor string [required]
+	name       string @[required]
+	descriptor string @[required]
 
 	attributes                         []reader.RawAttributeInfo
 	signature                          ?string

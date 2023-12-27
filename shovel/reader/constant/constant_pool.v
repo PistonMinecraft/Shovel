@@ -1,10 +1,10 @@
 module constant
 
-[heap]
+@[heap]
 pub struct ConstantPool {
 pub:
-	count   u16     [required]
-	entries []Entry [required]
+	count   u16     @[required]
+	entries []Entry @[required]
 }
 
 pub fn read_cp(b []u8, count u16, mut offset &int) !ConstantPool {

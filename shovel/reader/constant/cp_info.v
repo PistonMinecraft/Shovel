@@ -9,7 +9,7 @@ pub enum InfoTag as u8 {
 	// CONSTANT_Utf8
 	constant_utf8
 	// CONSTANT_Integer
-	constant_integer = 3
+	constant_integer             = 3
 	// CONSTANT_Float
 	constant_float
 	// CONSTANT_Long
@@ -29,7 +29,7 @@ pub enum InfoTag as u8 {
 	// CONSTANT_NameAndType
 	constant_name_and_type
 	// CONSTANT_MethodHandle(7)
-	constant_method_handle = 15
+	constant_method_handle       = 15
 	// CONSTANT_MethodType(7)
 	constant_method_type
 	// CONSTANT_Dynamic(11)
@@ -51,7 +51,7 @@ pub interface ConstantPoolInfo { // cp_info
 pub struct InvalidConstantInfo { // implements ConstantPoolInfo
 }
 
-[inline]
+@[inline]
 pub fn (i InvalidConstantInfo) tag() InfoTag {
 	return .unknown
 }
@@ -87,7 +87,7 @@ pub fn (e Entry) is_loadable() bool {
 	}
 }
 
-[inline]
+@[inline]
 fn parse_tag(tag u8) !InfoTag {
 	if tag > 0 && tag <= 20 && tag !in [2, 13, 14] {
 		return unsafe { InfoTag(tag) }

@@ -52,7 +52,7 @@ pub struct Module {
 	// The value of the `module_name_index` item must be a valid index into the
 	// `constant_pool` table. The `constant_pool` entry at that index must be a
 	// `CONSTANT_Module_info` structure (§4.4.11) denoting the current module.
-	name  constant.ConstantModuleInfo [required]
+	name  constant.ConstantModuleInfo @[required]
 	flags ModuleAccessFlag
 	// The value of the `module_version_index` item must be either zero or a valid
 	// index into the `constant_pool` table. If the value of the item is zero, then
@@ -101,7 +101,7 @@ pub struct ModuleRequires {
 	// The value of the `requires_index` item must be a valid index into the
 	// `constant_pool` table. The `constant_pool` entry at that index must be a
 	// `CONSTANT_Module_info` structure denoting a module on which the current module depends.
-	requires constant.ConstantModuleInfo [required]
+	requires constant.ConstantModuleInfo @[required]
 	flags    RequiresAccessFlag
 	// The value of the `requires_version_index` item must be either zero or a
 	// valid index into the `constant_pool` table. If the value of the item is zero,
@@ -119,7 +119,7 @@ pub struct ModuleExports {
 	// exported by the current module.
 	// At most one entry in the `exports` table may specify a package of a given
 	// name with its `exports_index` item.
-	exports constant.ConstantPackageInfo [required]
+	exports constant.ConstantPackageInfo @[required]
 	flags   ExportsOpensAccessFlag
 	// The value of the `exports_to_count` indicates the number of entries in the
 	// `exports_to_index` table.
@@ -146,7 +146,7 @@ pub struct ModuleOpens {
 	// current module.
 	// At most one entry in the opens table may specify a package of a given
 	// name with its opens_index item.
-	opens constant.ConstantPackageInfo [required]
+	opens constant.ConstantPackageInfo @[required]
 	flags ExportsOpensAccessFlag
 	// The value of the `opens_to_count` indicates the number of entries in the
 	// `opens_to_index` table.
@@ -174,7 +174,7 @@ pub struct ModuleProvides {
 	// the current module provides a service implementation.
 	// At most one entry in the `provides` table may specify a service interface of
 	// a given name with its `provides_index` item.
-	provides constant.ConstantClassInfo [required]
+	provides constant.ConstantClassInfo @[required]
 	// The value of the `provides_with_count` indicates the number of entries in
 	// the `provides_with_index` table.
 	// `provides_with_count` must be nonzero.
@@ -222,7 +222,7 @@ pub fn read_module(info []u8, pool constant.ConstantPool) ?Module {
 	return Module{module_name, module_access, module_version, requires, exports, opens, uses, provides}
 }
 
-[inline]
+@[inline]
 fn read_module_requires(info []u8, pool constant.ConstantPool, offset int) ?ModuleRequires {
 	return ModuleRequires{
 		requires: pool.get_module_info(binary.big_endian_u16_at(info, offset))?

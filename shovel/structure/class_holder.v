@@ -4,11 +4,11 @@ import shovel.reader
 
 type Class = ResolvedClass | reader.ClassFile
 
-[heap]
+@[heap]
 pub struct ClassMap {
 mut:
 	library_class_map map[string]Class
-pub:
+pub mut:
 	class_map map[string]ResolvedClass
 }
 

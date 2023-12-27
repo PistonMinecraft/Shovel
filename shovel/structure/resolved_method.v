@@ -9,9 +9,9 @@ import shovel.structure.attribute
 import shovel.structure.emsg
 
 pub struct ResolvedMethod { // method_info
-	access_flags reader.MethodAccessFlag [required]
-	name         string                  [required]
-	descriptor   string                  [required]
+	access_flags reader.MethodAccessFlag @[required]
+	name         string                  @[required]
+	descriptor   string                  @[required]
 
 	raw_attributes                          ?[]reader.RawAttributeInfo
 	code                                    ?c.Code

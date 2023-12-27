@@ -1,8 +1,9 @@
-module decompiler
+module decompiling
 
-import shovel.decompiler.structs
 import shovel.decompiler.emsg
+import strings
 
+@[heap]
 pub struct Importer {
 mut:
 	imported map[string]string
@@ -11,8 +12,8 @@ mut:
 // add_import adds an import
 // `class` internal name of the importing class
 // returns the symbol should be used in code
-pub fn (mut i Importer) add_import(dc structs.DecompilingClass, importing string) !string {
-	name := if last_slash := importing.last_index('/') {
+pub fn (mut i Importer) add_import(dc DecompilingClass, importing string) !string {
+	name := if last_slash := importing.index_last('/') {
 		importing.substr(last_slash + 1, importing.len)
 	} else {
 		return if dc.package != none {
@@ -32,4 +33,14 @@ pub fn (mut i Importer) add_import(dc structs.DecompilingClass, importing string
 		i.imported[name] = importing_class_name
 		name
 	}
+}
+
+// collect_imports collect all the imports
+pub fn (i &Importer) collect_imports(mut builder strings.Builder) {
+	mut values := i.imported.values()
+	values.sort()
+	for v in values {
+		builder.writeln('import ${v};')
+	}
+	builder.write_u8(`\n`)
 }

@@ -26,7 +26,7 @@ pub struct InnerClass {
 	// The value of the `inner_class_info_index` item must be a valid index into
 	// the `constant_pool` table. The `constant_pool` entry at that index must be
 	// a `CONSTANT_Class_info` structure representing `C`.
-	inner_class_info constant.ConstantClassInfo [required]
+	inner_class_info constant.ConstantClassInfo @[required]
 	// Full name of the outer class of this inner class
 	// `none` if `inner_class_info` is a top-level class or interface or a local class or
 	// an anonymous class or inner_name is `none`
@@ -64,7 +64,7 @@ pub struct InnerClass {
 	inner_class_access_flags reader.ClassAccessFlag
 }
 
-[direct_array_access]
+@[direct_array_access]
 pub fn read_inner_classes(info []u8, pool constant.ConstantPool) ?[]InnerClass {
 	mut ret := []InnerClass{len: int(binary.big_endian_u16(info))}
 	if info.len < 2 + ret.len * 8 {
