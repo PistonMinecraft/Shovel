@@ -12,12 +12,12 @@ pub:
 
 @[inline]
 pub fn (v ClassVersion) is_preview() bool {
-	return u16(v.major) >= u16(MajorVersion.v12) && v.minor == u16(version.preview_minor)
+	return u16(v.major) >= u16(MajorVersion.v12) && v.minor == version.preview_minor
 }
 
 pub fn (v ClassVersion) is_valid() bool {
 	if u16(v.major) >= u16(MajorVersion.v12) {
-		return v.minor == u16(version.preview_minor) || v.minor == u16(0)
+		return v.minor == version.preview_minor || v.minor == u16(0)
 	}
 	return true
 }

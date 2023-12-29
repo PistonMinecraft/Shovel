@@ -26,7 +26,7 @@ pub fn read(b []u8) !ClassFile {
 	}
 
 	// u2 minor_version; u2 major_version
-	class_version := version.ClassVersion{binary.big_endian_u16_at(b, 4), version.parse_major(binary.big_endian_u16_at(b,
+	class_version := version.ClassVersion{binary.big_endian_u16_at(b, 4), version.MajorVersion.parse(binary.big_endian_u16_at(b,
 		6)) or { return error('Unknown major class version: ${binary.big_endian_u16_at(b, 6)}') }}
 	if !class_version.is_valid() {
 		return error('Invalid class version')

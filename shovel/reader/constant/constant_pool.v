@@ -1,6 +1,6 @@
 module constant
 
-@[heap]
+@[heap; noinit]
 pub struct ConstantPool {
 pub:
 	count   u16     @[required]

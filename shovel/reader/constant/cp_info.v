@@ -42,6 +42,14 @@ pub enum InfoTag as u8 {
 	constant_package
 }
 
+@[inline]
+fn InfoTag.parse(tag u8) !InfoTag {
+	if tag > 0 && tag <= 20 && tag !in [2, 13, 14] {
+		return unsafe { InfoTag(tag) }
+	}
+	return error('Invalid constant pool tag: ${tag}')
+}
+
 pub interface ConstantPoolInfo { // cp_info
 	tag() InfoTag // u1 tag
 }
@@ -87,19 +95,11 @@ pub fn (e Entry) is_loadable() bool {
 	}
 }
 
-@[inline]
-fn parse_tag(tag u8) !InfoTag {
-	if tag > 0 && tag <= 20 && tag !in [2, 13, 14] {
-		return unsafe { InfoTag(tag) }
-	}
-	return error('Invalid constant pool tag: ${tag}')
-}
-
 fn read_cp_info(b []u8, off int) !(bool, int, Entry) {
-	tag := parse_tag(b[off])!
+	tag := InfoTag.parse(b[off])!
 	return match tag {
 		.constant_class {
-			false, 3, Entry(ConstantClassInfo{binary.big_endian_u16_at(b, off + 1)})
+			false, 3, Entry(ConstantClassInfo(binary.big_endian_u16_at(b, off + 1)))
 		}
 		.constant_fieldref {
 			false, 5, Entry(ConstantFieldrefInfo{binary.big_endian_u16_at(b, off + 1), binary.big_endian_u16_at(b,
@@ -114,7 +114,7 @@ fn read_cp_info(b []u8, off int) !(bool, int, Entry) {
 				off + 1), binary.big_endian_u16_at(b, off + 3)})
 		}
 		.constant_string {
-			false, 3, Entry(ConstantStringInfo{binary.big_endian_u16_at(b, off + 1)})
+			false, 3, Entry(ConstantStringInfo(binary.big_endian_u16_at(b, off + 1)))
 		}
 		.constant_integer {
 			false, 5, Entry(int(binary.big_endian_u32_at(b, off + 1)))
@@ -134,14 +134,15 @@ fn read_cp_info(b []u8, off int) !(bool, int, Entry) {
 		}
 		.constant_utf8 {
 			length := binary.big_endian_u16_at(b, off + 1)
+			_ = b[off + 3 + int(length)] // bounds check
 			false, 3 + length, Entry(parse_utf8_info(b, off + 3, int(length)))
 		}
 		.constant_method_handle {
-			false, 4, Entry(ConstantMethodHandleInfo{parse_reference_kind(b[off + 1])!, binary.big_endian_u16_at(b,
+			false, 4, Entry(ConstantMethodHandleInfo{ReferenceKind.parse(b[off + 1])!, binary.big_endian_u16_at(b,
 				off + 2)})
 		}
 		.constant_method_type {
-			false, 3, Entry(ConstantMethodTypeInfo{binary.big_endian_u16_at(b, off + 1)})
+			false, 3, Entry(ConstantMethodTypeInfo(binary.big_endian_u16_at(b, off + 1)))
 		}
 		.constant_dynamic {
 			false, 5, Entry(ConstantDynamicInfo{binary.big_endian_u16_at(b, off + 1), binary.big_endian_u16_at(b,
@@ -152,10 +153,10 @@ fn read_cp_info(b []u8, off int) !(bool, int, Entry) {
 				off + 3)})
 		}
 		.constant_module {
-			false, 3, Entry(ConstantModuleInfo{binary.big_endian_u16_at(b, off + 1)})
+			false, 3, Entry(ConstantModuleInfo(binary.big_endian_u16_at(b, off + 1)))
 		}
 		.constant_package {
-			false, 3, Entry(ConstantPackageInfo{binary.big_endian_u16_at(b, off + 1)})
+			false, 3, Entry(ConstantPackageInfo(binary.big_endian_u16_at(b, off + 1)))
 		}
 		else {
 			error('Unknown constant pool tag')

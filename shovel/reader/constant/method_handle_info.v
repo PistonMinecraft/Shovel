@@ -14,7 +14,7 @@ pub enum ReferenceKind {
 	invoke_interface
 }
 
-pub fn parse_reference_kind(reference_kind u8) !ReferenceKind {
+fn ReferenceKind.parse(reference_kind u8) !ReferenceKind {
 	if reference_kind >= u8(ReferenceKind.get_field)
 		&& reference_kind <= u8(ReferenceKind.invoke_interface) {
 		return unsafe { ReferenceKind(reference_kind) }

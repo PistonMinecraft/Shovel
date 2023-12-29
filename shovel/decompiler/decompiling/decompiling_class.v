@@ -16,7 +16,7 @@ pub:
 pub fn new_decompiling_class(mut resolved structure.ResolvedClass) DecompilingClass {
 	resolved.resolve_all_members()
 	class := resolved.this_class
-	if last_package_slash := class.last_index('/') {
+	if last_package_slash := class.index_last('/') {
 		return DecompilingClass{
 			resolved: resolved
 			package: class.substr(0, last_package_slash).replace_char(`/`, `.`, 1)

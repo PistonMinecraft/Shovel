@@ -1,6 +1,6 @@
 module version
 
-pub const latest_major = MajorVersion.v20
+pub const latest_major = MajorVersion.v21
 
 pub enum MajorVersion as u16 {
 	v1_1 = 45
@@ -23,10 +23,11 @@ pub enum MajorVersion as u16 {
 	v18
 	v19
 	v20
+	v21
 }
 
 @[inline]
-pub fn parse_major(major_version u16) ?MajorVersion {
+pub fn MajorVersion.parse(major_version u16) ?MajorVersion {
 	if major_version >= u16(MajorVersion.v1_1) && major_version <= u16(version.latest_major) {
 		return unsafe { MajorVersion(major_version) }
 	}
