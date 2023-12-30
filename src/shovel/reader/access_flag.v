@@ -50,17 +50,17 @@ pub type CMAccessFlag = ClassAccessFlag | MethodAccessFlag
 pub type AccessFlag = ClassAccessFlag | FieldAccessFlag | MethodAccessFlag
 
 @[inline]
-pub fn (f ClassAccessFlag) is_class_public() bool {
+pub fn (f ClassAccessFlag) is_public() bool {
 	return (f & reader.acc_public) != 0
 }
 
 @[inline]
-pub fn (f FieldAccessFlag) is_field_public() bool {
+pub fn (f FieldAccessFlag) is_public() bool {
 	return (f & reader.acc_public) != 0
 }
 
 @[inline]
-pub fn (f MethodAccessFlag) is_method_public() bool {
+pub fn (f MethodAccessFlag) is_public() bool {
 	return (f & reader.acc_public) != 0
 }
 
@@ -88,17 +88,17 @@ pub fn (f FMAccessFlag) is_static() bool {
 }
 
 @[inline]
-pub fn (f ClassAccessFlag) is_class_final() bool {
+pub fn (f ClassAccessFlag) is_final() bool {
 	return (f & reader.acc_final) != 0
 }
 
 @[inline]
-pub fn (f FieldAccessFlag) is_field_final() bool {
+pub fn (f FieldAccessFlag) is_final() bool {
 	return (f & reader.acc_final) != 0
 }
 
 @[inline]
-pub fn (f MethodAccessFlag) is_method_final() bool {
+pub fn (f MethodAccessFlag) is_final() bool {
 	return (f & reader.acc_final) != 0
 }
 

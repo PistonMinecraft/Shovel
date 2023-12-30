@@ -34,6 +34,7 @@ pub const attr_runtime_invisible_annotations = 'RuntimeInvisibleAnnotations'
 pub const attr_runtime_visible_type_annotations = 'RuntimeVisibleTypeAnnotations'
 pub const attr_runtime_invisible_type_annotations = 'RuntimeInvisibleTypeAnnotations'
 
+@[heap]
 pub struct RawAttributeInfo {
 pub:
 	attribute_name_index u16  @[required]
