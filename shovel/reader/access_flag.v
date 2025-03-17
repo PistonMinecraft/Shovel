@@ -44,10 +44,6 @@ pub const acc_mandated = 0x8000 // module, module_requires, module_exports, modu
 pub type ClassAccessFlag = u16
 pub type FieldAccessFlag = u16
 pub type MethodAccessFlag = u16
-pub type CFAccessFlag = ClassAccessFlag | FieldAccessFlag
-pub type FMAccessFlag = FieldAccessFlag | MethodAccessFlag
-pub type CMAccessFlag = ClassAccessFlag | MethodAccessFlag
-pub type AccessFlag = ClassAccessFlag | FieldAccessFlag | MethodAccessFlag
 
 @[inline]
 pub fn (f ClassAccessFlag) is_public() bool {
@@ -64,27 +60,44 @@ pub fn (f MethodAccessFlag) is_public() bool {
 	return (f & reader.acc_public) != 0
 }
 
-pub fn (f AccessFlag) is_private() bool {
-	return (match f {
-		ClassAccessFlag { f }
-		FieldAccessFlag { f }
-		MethodAccessFlag { f }
-	} & reader.acc_private) != 0
+@[inline]
+pub fn (f ClassAccessFlag) is_private() bool {
+	return (f & reader.acc_private) != 0
 }
 
-pub fn (f AccessFlag) is_protected() bool {
-	return (match f {
-		ClassAccessFlag { f }
-		FieldAccessFlag { f }
-		MethodAccessFlag { f }
-	} & reader.acc_protected) != 0
+@[inline]
+pub fn (f FieldAccessFlag) is_private() bool {
+	return (f & reader.acc_private) != 0
 }
 
-pub fn (f FMAccessFlag) is_static() bool {
-	return (match f {
-		FieldAccessFlag { f }
-		MethodAccessFlag { f }
-	} & reader.acc_static) != 0
+@[inline]
+pub fn (f MethodAccessFlag) is_private() bool {
+	return (f & reader.acc_private) != 0
+}
+
+@[inline]
+pub fn (f ClassAccessFlag) is_protected() bool {
+	return (f & reader.acc_protected) != 0
+}
+
+@[inline]
+pub fn (f FieldAccessFlag) is_protected() bool {
+	return (f & reader.acc_protected) != 0
+}
+
+@[inline]
+pub fn (f MethodAccessFlag) is_protected() bool {
+	return (f & reader.acc_protected) != 0
+}
+
+@[inline]
+pub fn (f FieldAccessFlag) is_static() bool {
+	return (f & reader.acc_static) != 0
+}
+
+@[inline]
+pub fn (f MethodAccessFlag) is_static() bool {
+	return (f & reader.acc_static) != 0
 }
 
 @[inline]
@@ -102,30 +115,37 @@ pub fn (f MethodAccessFlag) is_final() bool {
 	return (f & reader.acc_final) != 0
 }
 
+@[inline]
 pub fn (f ClassAccessFlag) is_super() bool {
 	return (f & reader.acc_super) != 0
 }
 
+@[inline]
 pub fn (f MethodAccessFlag) is_synchronized() bool {
 	return (f & reader.acc_synchronized) != 0
 }
 
+@[inline]
 pub fn (f FieldAccessFlag) is_volatile() bool {
 	return (f & reader.acc_volatile) != 0
 }
 
+@[inline]
 pub fn (f MethodAccessFlag) is_bridge() bool {
 	return (f & reader.acc_bridge) != 0
 }
 
+@[inline]
 pub fn (f FieldAccessFlag) is_transient() bool {
 	return (f & reader.acc_transient) != 0
 }
 
+@[inline]
 pub fn (f MethodAccessFlag) is_varargs() bool {
 	return (f & reader.acc_varargs) != 0
 }
 
+@[inline]
 pub fn (f MethodAccessFlag) is_native() bool {
 	return (f & reader.acc_native) != 0
 }
@@ -145,32 +165,42 @@ pub fn (f MethodAccessFlag) is_abstract() bool {
 	return (f & reader.acc_abstract) != 0
 }
 
+@[inline]
 pub fn (f MethodAccessFlag) is_strict() bool {
 	return (f & reader.acc_strict) != 0
 }
 
-pub fn (f AccessFlag) is_synthetic() bool {
-	return (match f {
-		ClassAccessFlag { f }
-		FieldAccessFlag { f }
-		MethodAccessFlag { f }
-	} & reader.acc_synthetic) != 0
+@[inline]
+pub fn (f ClassAccessFlag) is_synthetic() bool {
+	return (f & reader.acc_synthetic) != 0
 }
 
+@[inline]
+pub fn (f FieldAccessFlag) is_synthetic() bool {
+	return (f & reader.acc_synthetic) != 0
+}
+
+@[inline]
+pub fn (f MethodAccessFlag) is_synthetic() bool {
+	return (f & reader.acc_synthetic) != 0
+}
+
+@[inline]
 pub fn (f ClassAccessFlag) is_annotation() bool {
 	return (f & reader.acc_annotation) != 0
 }
 
 @[inline]
-pub fn (f ClassAccessFlag) is_class_enum() bool {
+pub fn (f ClassAccessFlag) is_enum() bool {
 	return (f & reader.acc_enum) != 0
 }
 
 @[inline]
-pub fn (f FieldAccessFlag) is_field_enum() bool {
+pub fn (f FieldAccessFlag) is_enum() bool {
 	return (f & reader.acc_enum) != 0
 }
 
+@[inline]
 pub fn (f ClassAccessFlag) is_module() bool {
 	return (f & reader.acc_module) != 0
 }

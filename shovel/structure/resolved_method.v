@@ -8,6 +8,7 @@ import encoding.binary
 import shovel.structure.attribute
 import shovel.structure.emsg
 
+@[heap]
 pub struct ResolvedMethod { // method_info
 	access_flags reader.MethodAccessFlag @[required]
 	name         string                  @[required]

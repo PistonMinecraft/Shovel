@@ -1,4 +1,4 @@
-module modules
+module jmodule
 
 import shovel.reader.constant
 import encoding.binary

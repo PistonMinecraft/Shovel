@@ -6,11 +6,11 @@ import shovel.reader
 import encoding.binary
 import shovel.structure.attribute
 import shovel.structure.attribute.annotation
-import shovel.structure.attribute.modules
+import shovel.structure.attribute.jmodule
 import shovel.structure.emsg
 
-type Field = ResolvedField | reader.FieldInfo
-type Method = ResolvedMethod | reader.MethodInfo
+pub type Field = ResolvedField | reader.FieldInfo
+pub type Method = ResolvedMethod | reader.MethodInfo
 
 @[heap]
 pub struct ResolvedClass {
@@ -28,7 +28,7 @@ pub:
 	inner_classes                      ?[]attribute.InnerClass
 	enclosing_method                   ?attribute.EnclosingMethod
 	bootstrap_methods                  ?[]attribute.BootstrapMethod
-	mod                                ?modules.Module
+	mod                                ?jmodule.Module
 	module_packages                    ?[]constant.ConstantPackageInfo
 	module_main_class                  ?constant.ConstantClassInfo
 	nest_host                          ?constant.ConstantClassInfo
@@ -54,7 +54,7 @@ pub fn resolve_class(class reader.ClassFile) !ResolvedClass {
 	mut inner_classes := ?[]attribute.InnerClass(none)
 	mut enclosing_method := ?attribute.EnclosingMethod(none)
 	mut bootstrap_methods := ?[]attribute.BootstrapMethod(none)
-	mut mod := ?modules.Module(none)
+	mut mod := ?jmodule.Module(none)
 	mut module_packages := ?[]constant.ConstantPackageInfo(none)
 	mut module_main_class := ?constant.ConstantClassInfo(none)
 	mut nest_host := ?constant.ConstantClassInfo(none)
@@ -129,7 +129,7 @@ pub fn resolve_class(class reader.ClassFile) !ResolvedClass {
 				}
 				reader.attr_module {
 					if mod == none {
-						mod = modules.read_module(attr.info, pool) or {
+						mod = jmodule.read_module(attr.info, pool) or {
 							return emsg.invalid_attribute(reader.attr_module)
 						}
 					} else {
@@ -306,4 +306,8 @@ pub fn (mut r ResolvedClass) resolve_all_members() {
 			}
 		}
 	}
+}
+
+pub fn (r ResolvedClass) get_fields() []Field {
+	return r.fields.values()
 }

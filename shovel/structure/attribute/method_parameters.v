@@ -20,6 +20,7 @@ pub fn (f MethodParameterAccess) is_method_parameter_mandated() bool {
 }
 
 pub struct MethodParameter {
+pub:
 	name   ?string
 	access MethodParameterAccess
 }

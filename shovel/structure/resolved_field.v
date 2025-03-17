@@ -8,6 +8,7 @@ import shovel.structure.emsg
 
 @[heap]
 pub struct ResolvedField {
+pub:
 	access_flags reader.FieldAccessFlag @[required]
 	name         string                 @[required]
 	descriptor   string                 @[required]

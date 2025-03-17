@@ -12,21 +12,20 @@ pub mut:
 	class_map map[string]ResolvedClass
 }
 
-pub fn create_class_map(source []reader.ClassFile, libraries [][]reader.ClassFile) ?ClassMap {
+pub fn create_class_map(source []reader.ClassFile, libraries [][]reader.ClassFile) ClassMap {
 	mut class_map := map[string]ResolvedClass{}
 	mut library_class_map := map[string]Class{}
 	for class in source {
-		class_map[class.constant_pool.get_utf8(class.this_class)?] = resolve_class(class) or {
-			panic('unable to resolve class')
-		}
+		class_map[class.constant_pool.get_utf8(class.this_class) or {
+			panic('Class name not found in the constant pool')
+		}] = resolve_class(class) or { panic('unable to resolve class') }
 	}
 	for lib in libraries {
 		for class in lib {
-			library_class_map[class.constant_pool.get_utf8(class.this_class)?] = class
+			library_class_map[class.constant_pool.get_utf8(class.this_class) or {
+				panic('Class name not found in the constant pool')
+			}] = class
 		}
 	}
-	return ClassMap{
-		library_class_map: library_class_map
-		class_map: class_map
-	}
+	return ClassMap{library_class_map, class_map}
 }

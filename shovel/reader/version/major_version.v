@@ -1,6 +1,6 @@
 module version
 
-pub const latest_major = MajorVersion.v21
+pub const latest_major = MajorVersion.v23
 
 pub enum MajorVersion as u16 {
 	v1_1 = 45
@@ -24,6 +24,8 @@ pub enum MajorVersion as u16 {
 	v19
 	v20
 	v21
+	v22
+	v23
 }
 
 @[inline]

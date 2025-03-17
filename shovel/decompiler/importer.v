@@ -1,4 +1,4 @@
-module decompiling
+module decompiler
 
 import shovel.decompiler.emsg
 import strings
@@ -9,11 +9,15 @@ mut:
 	imported map[string]string
 }
 
+pub fn Importer.new() Importer {
+	return Importer{map[string]string{}}
+}
+
 // add_import adds an import
 // `class` internal name of the importing class
 // returns the symbol should be used in code
 pub fn (mut i Importer) add_import(dc DecompilingClass, importing string) !string {
-	name := if last_slash := importing.index_last('/') {
+	name := if last_slash := importing.last_index('/') {
 		importing.substr(last_slash + 1, importing.len)
 	} else {
 		return if dc.package != none {

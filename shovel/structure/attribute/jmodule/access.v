@@ -1,4 +1,4 @@
-module modules
+module jmodule
 
 import shovel.reader
 
@@ -17,7 +17,7 @@ pub fn (f ModuleAccessFlag) is_module_synthetic() bool {
 
 @[inline]
 pub fn (f ModuleAccessFlag) is_module_open() bool {
-	return (f & modules.acc_open) != 0
+	return (f & jmodule.acc_open) != 0
 }
 
 @[inline]
@@ -34,12 +34,12 @@ pub fn (f RequiresAccessFlag) is_requires_synthetic() bool {
 
 @[inline]
 pub fn (f RequiresAccessFlag) is_requires_transitive() bool {
-	return (f & modules.acc_transitive) != 0
+	return (f & jmodule.acc_transitive) != 0
 }
 
 @[inline]
 pub fn (f RequiresAccessFlag) is_requires_static_phase() bool {
-	return (f & modules.acc_static_phase) != 0
+	return (f & jmodule.acc_static_phase) != 0
 }
 
 @[inline]
