@@ -98,19 +98,21 @@ fn resolve_field(field reader.FieldInfo, pool constant.ConstantPool) !ResolvedFi
 		}
 	}
 	return ResolvedField{
-		access_flags: field.access_flags
-		name: pool.get_utf8(field.name_index) or { return emsg.invalid_name_index('field') }
-		descriptor: pool.get_utf8(field.descriptor_index) or {
+		access_flags:                       field.access_flags
+		name:                               pool.get_utf8(field.name_index) or {
+			return emsg.invalid_name_index('field')
+		}
+		descriptor:                         pool.get_utf8(field.descriptor_index) or {
 			return emsg.invalid_name_index('field descriptor')
 		}
-		raw_attributes: raw_attributes
-		constant_value: constant_value
-		synthetic: synthetic
-		deprecated: deprecated
-		signature: signature
-		runtime_visible_annotations: runtime_visible_annotations
-		runtime_invisible_annotations: runtime_invisible_annotations
-		runtime_visible_type_annotations: runtime_visible_type_annotations
+		raw_attributes:                     raw_attributes
+		constant_value:                     constant_value
+		synthetic:                          synthetic
+		deprecated:                         deprecated
+		signature:                          signature
+		runtime_visible_annotations:        runtime_visible_annotations
+		runtime_invisible_annotations:      runtime_invisible_annotations
+		runtime_visible_type_annotations:   runtime_visible_type_annotations
 		runtime_invisible_type_annotations: runtime_invisible_type_annotations
 	}
 }

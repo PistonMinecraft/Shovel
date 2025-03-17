@@ -255,7 +255,7 @@ fn read_target_info(info []u8, mut offset &int, target_type TargetType) TargetIn
 			TargetInfo(TypeParameterBoundTarget{type_parameter_index, bound_index})
 		}
 		.field_empty_target, .return_empty_target, .receiver_empty_target {
-			TargetInfo(annotation.empty_target)
+			TargetInfo(empty_target)
 		}
 		.formal_parameter {
 			formal_parameter_index := info[*offset]

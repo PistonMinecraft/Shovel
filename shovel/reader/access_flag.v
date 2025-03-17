@@ -47,160 +47,160 @@ pub type MethodAccessFlag = u16
 
 @[inline]
 pub fn (f ClassAccessFlag) is_public() bool {
-	return (f & reader.acc_public) != 0
+	return (f & acc_public) != 0
 }
 
 @[inline]
 pub fn (f FieldAccessFlag) is_public() bool {
-	return (f & reader.acc_public) != 0
+	return (f & acc_public) != 0
 }
 
 @[inline]
 pub fn (f MethodAccessFlag) is_public() bool {
-	return (f & reader.acc_public) != 0
+	return (f & acc_public) != 0
 }
 
 @[inline]
 pub fn (f ClassAccessFlag) is_private() bool {
-	return (f & reader.acc_private) != 0
+	return (f & acc_private) != 0
 }
 
 @[inline]
 pub fn (f FieldAccessFlag) is_private() bool {
-	return (f & reader.acc_private) != 0
+	return (f & acc_private) != 0
 }
 
 @[inline]
 pub fn (f MethodAccessFlag) is_private() bool {
-	return (f & reader.acc_private) != 0
+	return (f & acc_private) != 0
 }
 
 @[inline]
 pub fn (f ClassAccessFlag) is_protected() bool {
-	return (f & reader.acc_protected) != 0
+	return (f & acc_protected) != 0
 }
 
 @[inline]
 pub fn (f FieldAccessFlag) is_protected() bool {
-	return (f & reader.acc_protected) != 0
+	return (f & acc_protected) != 0
 }
 
 @[inline]
 pub fn (f MethodAccessFlag) is_protected() bool {
-	return (f & reader.acc_protected) != 0
+	return (f & acc_protected) != 0
 }
 
 @[inline]
 pub fn (f FieldAccessFlag) is_static() bool {
-	return (f & reader.acc_static) != 0
+	return (f & acc_static) != 0
 }
 
 @[inline]
 pub fn (f MethodAccessFlag) is_static() bool {
-	return (f & reader.acc_static) != 0
+	return (f & acc_static) != 0
 }
 
 @[inline]
 pub fn (f ClassAccessFlag) is_final() bool {
-	return (f & reader.acc_final) != 0
+	return (f & acc_final) != 0
 }
 
 @[inline]
 pub fn (f FieldAccessFlag) is_final() bool {
-	return (f & reader.acc_final) != 0
+	return (f & acc_final) != 0
 }
 
 @[inline]
 pub fn (f MethodAccessFlag) is_final() bool {
-	return (f & reader.acc_final) != 0
+	return (f & acc_final) != 0
 }
 
 @[inline]
 pub fn (f ClassAccessFlag) is_super() bool {
-	return (f & reader.acc_super) != 0
+	return (f & acc_super) != 0
 }
 
 @[inline]
 pub fn (f MethodAccessFlag) is_synchronized() bool {
-	return (f & reader.acc_synchronized) != 0
+	return (f & acc_synchronized) != 0
 }
 
 @[inline]
 pub fn (f FieldAccessFlag) is_volatile() bool {
-	return (f & reader.acc_volatile) != 0
+	return (f & acc_volatile) != 0
 }
 
 @[inline]
 pub fn (f MethodAccessFlag) is_bridge() bool {
-	return (f & reader.acc_bridge) != 0
+	return (f & acc_bridge) != 0
 }
 
 @[inline]
 pub fn (f FieldAccessFlag) is_transient() bool {
-	return (f & reader.acc_transient) != 0
+	return (f & acc_transient) != 0
 }
 
 @[inline]
 pub fn (f MethodAccessFlag) is_varargs() bool {
-	return (f & reader.acc_varargs) != 0
+	return (f & acc_varargs) != 0
 }
 
 @[inline]
 pub fn (f MethodAccessFlag) is_native() bool {
-	return (f & reader.acc_native) != 0
+	return (f & acc_native) != 0
 }
 
 @[inline]
 pub fn (f ClassAccessFlag) is_interface() bool {
-	return (f & reader.acc_interface) != 0
+	return (f & acc_interface) != 0
 }
 
 @[inline]
 pub fn (f ClassAccessFlag) is_abstract() bool {
-	return (f & reader.acc_abstract) != 0
+	return (f & acc_abstract) != 0
 }
 
 @[inline]
 pub fn (f MethodAccessFlag) is_abstract() bool {
-	return (f & reader.acc_abstract) != 0
+	return (f & acc_abstract) != 0
 }
 
 @[inline]
 pub fn (f MethodAccessFlag) is_strict() bool {
-	return (f & reader.acc_strict) != 0
+	return (f & acc_strict) != 0
 }
 
 @[inline]
 pub fn (f ClassAccessFlag) is_synthetic() bool {
-	return (f & reader.acc_synthetic) != 0
+	return (f & acc_synthetic) != 0
 }
 
 @[inline]
 pub fn (f FieldAccessFlag) is_synthetic() bool {
-	return (f & reader.acc_synthetic) != 0
+	return (f & acc_synthetic) != 0
 }
 
 @[inline]
 pub fn (f MethodAccessFlag) is_synthetic() bool {
-	return (f & reader.acc_synthetic) != 0
+	return (f & acc_synthetic) != 0
 }
 
 @[inline]
 pub fn (f ClassAccessFlag) is_annotation() bool {
-	return (f & reader.acc_annotation) != 0
+	return (f & acc_annotation) != 0
 }
 
 @[inline]
 pub fn (f ClassAccessFlag) is_enum() bool {
-	return (f & reader.acc_enum) != 0
+	return (f & acc_enum) != 0
 }
 
 @[inline]
 pub fn (f FieldAccessFlag) is_enum() bool {
-	return (f & reader.acc_enum) != 0
+	return (f & acc_enum) != 0
 }
 
 @[inline]
 pub fn (f ClassAccessFlag) is_module() bool {
-	return (f & reader.acc_module) != 0
+	return (f & acc_module) != 0
 }

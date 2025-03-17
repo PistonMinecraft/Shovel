@@ -101,7 +101,8 @@ fn resolve_method(method reader.MethodInfo, pool constant.ConstantPool) !Resolve
 				reader.attr_method_parameters {
 					if method_parameters == none {
 						method_parameters = []attribute.MethodParameter{len: int(attr.info[0]), init: attribute.MethodParameter{
-							name: pool.get_utf8(binary.big_endian_u16_at(attr.info, 1 + index * 4))
+							name:   pool.get_utf8(binary.big_endian_u16_at(attr.info,
+								1 + index * 4))
 							access: attribute.MethodParameterAccess(binary.big_endian_u16_at(attr.info,
 								3 + index * 4))
 						}}
@@ -163,24 +164,26 @@ fn resolve_method(method reader.MethodInfo, pool constant.ConstantPool) !Resolve
 		}
 	}
 	return ResolvedMethod{
-		access_flags: method.access_flags
-		name: pool.get_utf8(method.name_index) or { return emsg.invalid_name_index('method') }
-		descriptor: pool.get_utf8(method.descriptor_index) or {
+		access_flags:                            method.access_flags
+		name:                                    pool.get_utf8(method.name_index) or {
+			return emsg.invalid_name_index('method')
+		}
+		descriptor:                              pool.get_utf8(method.descriptor_index) or {
 			return emsg.invalid_name_index('method descriptor')
 		}
-		raw_attributes: raw_attributes
-		code: code
-		exceptions: exceptions
-		runtime_visible_parameter_annotations: runtime_visible_parameter_annotations
+		raw_attributes:                          raw_attributes
+		code:                                    code
+		exceptions:                              exceptions
+		runtime_visible_parameter_annotations:   runtime_visible_parameter_annotations
 		runtime_invisible_parameter_annotations: runtime_invisible_parameter_annotations
-		annotation_default: annotation_default
-		method_parameters: method_parameters
-		synthetic: synthetic
-		deprecated: deprecated
-		signature: signature
-		runtime_visible_annotations: runtime_visible_annotations
-		runtime_invisible_annotations: runtime_invisible_annotations
-		runtime_visible_type_annotations: runtime_visible_type_annotations
-		runtime_invisible_type_annotations: runtime_invisible_type_annotations
+		annotation_default:                      annotation_default
+		method_parameters:                       method_parameters
+		synthetic:                               synthetic
+		deprecated:                              deprecated
+		signature:                               signature
+		runtime_visible_annotations:             runtime_visible_annotations
+		runtime_invisible_annotations:           runtime_invisible_annotations
+		runtime_visible_type_annotations:        runtime_visible_type_annotations
+		runtime_invisible_type_annotations:      runtime_invisible_type_annotations
 	}
 }

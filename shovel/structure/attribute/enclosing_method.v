@@ -39,7 +39,7 @@ pub struct EnclosingMethod {
 
 pub fn read_enclosing_method(info []u8, pool constant.ConstantPool) ?EnclosingMethod {
 	return EnclosingMethod{
-		class: pool.get_class_info(binary.big_endian_u16(info))?
+		class:  pool.get_class_info(binary.big_endian_u16(info))?
 		method: pool.get_name_and_type_info(binary.big_endian_u16_at(info, 2))
 	}
 }

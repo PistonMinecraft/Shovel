@@ -72,9 +72,11 @@ pub fn read_inner_classes(info []u8, pool constant.ConstantPool) ?[]InnerClass {
 	}
 	for i := 2; i < info.len; i += 8 {
 		ret << InnerClass{
-			inner_class_info: pool.get_class_info(binary.big_endian_u16_at(info, i))?
-			outer_class_info: pool.get_class_info(binary.big_endian_u16_at(info, i + 2))
-			inner_name: pool.get_utf8(binary.big_endian_u16_at(info, i + 4))
+			inner_class_info:         pool.get_class_info(binary.big_endian_u16_at(info,
+				i))?
+			outer_class_info:         pool.get_class_info(binary.big_endian_u16_at(info,
+				i + 2))
+			inner_name:               pool.get_utf8(binary.big_endian_u16_at(info, i + 4))
 			inner_class_access_flags: reader.ClassAccessFlag(binary.big_endian_u16_at(info,
 				i + 6))
 		}

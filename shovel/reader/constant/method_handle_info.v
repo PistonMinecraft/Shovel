@@ -3,7 +3,7 @@ module constant
 import shovel.reader.version
 
 pub enum ReferenceKind {
-	get_field          = 1
+	get_field = 1
 	get_static
 	put_field
 	put_static
@@ -12,14 +12,6 @@ pub enum ReferenceKind {
 	invoke_special
 	new_invoke_special
 	invoke_interface
-}
-
-fn ReferenceKind.parse(reference_kind u8) !ReferenceKind {
-	if reference_kind >= u8(ReferenceKind.get_field)
-		&& reference_kind <= u8(ReferenceKind.invoke_interface) {
-		return unsafe { ReferenceKind(reference_kind) }
-	}
-	return error('Unknown reference kind: ${reference_kind}')
 }
 
 // CONSTANT_MethodHandle

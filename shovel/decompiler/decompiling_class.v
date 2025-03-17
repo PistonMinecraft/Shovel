@@ -20,15 +20,15 @@ pub fn DecompilingClass.new(mut resolved structure.ResolvedClass) DecompilingCla
 	class := resolved.this_class
 	if last_package_slash := class.last_index('/') {
 		return DecompilingClass{
-			resolved: resolved
-			package: class.substr(0, last_package_slash).replace_char(`/`, `.`, 1)
+			resolved:   resolved
+			package:    class.substr(0, last_package_slash).replace_char(`/`, `.`, 1)
 			this_class: class.substr(last_package_slash + 1, class.len)
 			// TODO: when this class is inner class
 		}
 	} else { // default package
 		return DecompilingClass{
-			resolved: resolved
-			package: none
+			resolved:   resolved
+			package:    none
 			this_class: class
 		}
 	}
@@ -50,11 +50,11 @@ pub fn (d DecompilingClass) decompile_class(importer Importer) []u8 {
 		}
 
 		builder.write_string(match true {
-		acc.is_interface() { 'interface ' }
-		acc.is_enum() { 'enum ' }
-		acc.is_annotation() { '@interface ' }
-		else { 'class ' }
-	})
+			acc.is_interface() { 'interface ' }
+			acc.is_enum() { 'enum ' }
+			acc.is_annotation() { '@interface ' }
+			else { 'class ' }
+		})
 	}
 
 	builder.write_string(d.this_class)

@@ -84,8 +84,8 @@ pub fn read_code(info []u8, pool constant.ConstantPool) !Code {
 	exception_table_length := int(binary.big_endian_u16_at(info, off))
 	off += 2
 	exception_table := []ExceptionTableEntry{len: exception_table_length, init: ExceptionTableEntry{
-		start_pc: binary.big_endian_u16_at(info, off + index * 8)
-		end_pc: binary.big_endian_u16_at(info, off + index * 8 + 2)
+		start_pc:   binary.big_endian_u16_at(info, off + index * 8)
+		end_pc:     binary.big_endian_u16_at(info, off + index * 8 + 2)
 		handler_pc: binary.big_endian_u16_at(info, off + index * 8 + 4)
 		catch_type: pool.get_class_info(binary.big_endian_u16_at(info, off + index * 8 + 6))
 	}}
@@ -106,12 +106,12 @@ pub fn read_code(info []u8, pool constant.ConstantPool) !Code {
 				reader.attr_line_number_table {
 					if line_number_table == none {
 						line_number_table = []LineNumber{len: int(binary.big_endian_u16(attr.info)), init: LineNumber{
-							start_pc: binary.big_endian_u16_at(attr.info, 2 + index * 4)
+							start_pc:    binary.big_endian_u16_at(attr.info, 2 + index * 4)
 							line_number: binary.big_endian_u16_at(attr.info, 4 + index * 4)
 						}}
 					} else {
 						utils.unwrap(line_number_table) << []LineNumber{len: int(binary.big_endian_u16(attr.info)), init: LineNumber{
-							start_pc: binary.big_endian_u16_at(attr.info, 2 + index * 4)
+							start_pc:    binary.big_endian_u16_at(attr.info, 2 + index * 4)
 							line_number: binary.big_endian_u16_at(attr.info, 4 + index * 4)
 						}}
 					}
@@ -119,58 +119,62 @@ pub fn read_code(info []u8, pool constant.ConstantPool) !Code {
 				reader.attr_local_variable_table {
 					if local_variable_table == none {
 						local_variable_table = []LocalVariable{len: int(binary.big_endian_u16(attr.info)), init: LocalVariable{
-							start_pc: binary.big_endian_u16_at(attr.info, 2 + index * 10)
-							length: binary.big_endian_u16_at(attr.info, 4 + index * 10)
-							name: pool.get_utf8(binary.big_endian_u16_at(attr.info, 6 + index * 10)) or {
+							start_pc:   binary.big_endian_u16_at(attr.info, 2 + index * 10)
+							length:     binary.big_endian_u16_at(attr.info, 4 + index * 10)
+							name:       pool.get_utf8(binary.big_endian_u16_at(attr.info,
+								6 + index * 10)) or {
 								return error('local variable name is absent')
 							}
 							descriptor: pool.get_utf8(binary.big_endian_u16_at(attr.info,
 								8 + index * 10)) or {
 								return error('local variable descriptor is absent')
 							}
-							index: binary.big_endian_u16_at(attr.info, 10 + index * 10)
+							index:      binary.big_endian_u16_at(attr.info, 10 + index * 10)
 						}}
 					} else {
 						utils.unwrap(local_variable_table) << []LocalVariable{len: int(binary.big_endian_u16(attr.info)), init: LocalVariable{
-							start_pc: binary.big_endian_u16_at(attr.info, 2 + index * 10)
-							length: binary.big_endian_u16_at(attr.info, 4 + index * 10)
-							name: pool.get_utf8(binary.big_endian_u16_at(attr.info, 6 + index * 10)) or {
+							start_pc:   binary.big_endian_u16_at(attr.info, 2 + index * 10)
+							length:     binary.big_endian_u16_at(attr.info, 4 + index * 10)
+							name:       pool.get_utf8(binary.big_endian_u16_at(attr.info,
+								6 + index * 10)) or {
 								return error('local variable name is absent')
 							}
 							descriptor: pool.get_utf8(binary.big_endian_u16_at(attr.info,
 								8 + index * 10)) or {
 								return error('local variable descriptor is absent')
 							}
-							index: binary.big_endian_u16_at(attr.info, 10 + index * 10)
+							index:      binary.big_endian_u16_at(attr.info, 10 + index * 10)
 						}}
 					}
 				}
 				reader.attr_local_variable_type_table {
 					if local_variable_type_table == none {
 						local_variable_type_table = []LocalVariableType{len: int(binary.big_endian_u16(attr.info)), init: LocalVariableType{
-							start_pc: binary.big_endian_u16_at(attr.info, 2 + index * 10)
-							length: binary.big_endian_u16_at(attr.info, 4 + index * 10)
-							name: pool.get_utf8(binary.big_endian_u16_at(attr.info, 6 + index * 10)) or {
+							start_pc:  binary.big_endian_u16_at(attr.info, 2 + index * 10)
+							length:    binary.big_endian_u16_at(attr.info, 4 + index * 10)
+							name:      pool.get_utf8(binary.big_endian_u16_at(attr.info,
+								6 + index * 10)) or {
 								return error('local variable type name is absent')
 							}
 							signature: pool.get_utf8(binary.big_endian_u16_at(attr.info,
 								8 + index * 10)) or {
 								return error('local variable type signature is absent')
 							}
-							index: binary.big_endian_u16_at(attr.info, 10 + index * 10)
+							index:     binary.big_endian_u16_at(attr.info, 10 + index * 10)
 						}}
 					} else {
 						utils.unwrap(local_variable_type_table) << []LocalVariableType{len: int(binary.big_endian_u16(attr.info)), init: LocalVariableType{
-							start_pc: binary.big_endian_u16_at(attr.info, 2 + index * 10)
-							length: binary.big_endian_u16_at(attr.info, 4 + index * 10)
-							name: pool.get_utf8(binary.big_endian_u16_at(attr.info, 6 + index * 10)) or {
+							start_pc:  binary.big_endian_u16_at(attr.info, 2 + index * 10)
+							length:    binary.big_endian_u16_at(attr.info, 4 + index * 10)
+							name:      pool.get_utf8(binary.big_endian_u16_at(attr.info,
+								6 + index * 10)) or {
 								return error('local variable type name is absent')
 							}
 							signature: pool.get_utf8(binary.big_endian_u16_at(attr.info,
 								8 + index * 10)) or {
 								return error('local variable type signature is absent')
 							}
-							index: binary.big_endian_u16_at(attr.info, 10 + index * 10)
+							index:     binary.big_endian_u16_at(attr.info, 10 + index * 10)
 						}}
 					}
 				}
@@ -206,16 +210,16 @@ pub fn read_code(info []u8, pool constant.ConstantPool) !Code {
 		}
 	}
 	return Code{
-		max_stack: max_stack
-		max_locals: max_locals
-		code: code
-		exception_table: exception_table
-		raw_attributes: raw_attributes
-		line_number_table: line_number_table
-		local_variable_table: local_variable_table
-		local_variable_type_table: local_variable_type_table
-		stack_map_table: stack_map_table
-		runtime_visible_type_annotations: runtime_visible_type_annotations
+		max_stack:                          max_stack
+		max_locals:                         max_locals
+		code:                               code
+		exception_table:                    exception_table
+		raw_attributes:                     raw_attributes
+		line_number_table:                  line_number_table
+		local_variable_table:               local_variable_table
+		local_variable_type_table:          local_variable_type_table
+		stack_map_table:                    stack_map_table
+		runtime_visible_type_annotations:   runtime_visible_type_annotations
 		runtime_invisible_type_annotations: runtime_invisible_type_annotations
 	}
 }

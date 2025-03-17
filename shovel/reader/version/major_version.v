@@ -27,11 +27,3 @@ pub enum MajorVersion as u16 {
 	v22
 	v23
 }
-
-@[inline]
-pub fn MajorVersion.parse(major_version u16) ?MajorVersion {
-	if major_version >= u16(MajorVersion.v1_1) && major_version <= u16(version.latest_major) {
-		return unsafe { MajorVersion(major_version) }
-	}
-	return none
-}

@@ -226,8 +226,8 @@ pub fn read_module(info []u8, pool constant.ConstantPool) ?Module {
 fn read_module_requires(info []u8, pool constant.ConstantPool, offset int) ?ModuleRequires {
 	return ModuleRequires{
 		requires: pool.get_module_info(binary.big_endian_u16_at(info, offset))?
-		flags: RequiresAccessFlag(binary.big_endian_u16_at(info, offset + 2))
-		version: pool.get_utf8(binary.big_endian_u16_at(info, offset + 6))
+		flags:    RequiresAccessFlag(binary.big_endian_u16_at(info, offset + 2))
+		version:  pool.get_utf8(binary.big_endian_u16_at(info, offset + 6))
 	}
 }
 

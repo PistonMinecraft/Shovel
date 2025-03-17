@@ -21,13 +21,15 @@ pub:
 }
 
 pub fn read(b []u8) !ClassFile {
-	if b.len < 4 || binary.big_endian_u32(b) != reader.magic { // u4 magic
+	if b.len < 4 || binary.big_endian_u32(b) != magic { // u4 magic
 		return error('Not a class file')
 	}
 
 	// u2 minor_version; u2 major_version
-	class_version := version.ClassVersion{binary.big_endian_u16_at(b, 4), version.MajorVersion.parse(binary.big_endian_u16_at(b,
-		6)) or { return error('Unknown major class version: ${binary.big_endian_u16_at(b, 6)}') }}
+	major_version := binary.big_endian_u16_at(b, 6)
+	class_version := version.ClassVersion{binary.big_endian_u16_at(b, 4), version.MajorVersion.from(major_version) or {
+		return error('Unknown major class version: ${major_version}')
+	}}
 	if !class_version.is_valid() {
 		return error('Invalid class version')
 	}
@@ -64,14 +66,14 @@ pub fn read(b []u8) !ClassFile {
 	}
 
 	return ClassFile{
-		version: class_version
+		version:       class_version
 		constant_pool: cp
-		access_flags: access
-		this_class: this_class
-		super_class: super_class
-		interfaces: itfs
-		fields: fields
-		methods: methods
-		attributes: attrs
+		access_flags:  access
+		this_class:    this_class
+		super_class:   super_class
+		interfaces:    itfs
+		fields:        fields
+		methods:       methods
+		attributes:    attrs
 	}
 }

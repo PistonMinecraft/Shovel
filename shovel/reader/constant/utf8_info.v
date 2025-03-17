@@ -42,9 +42,9 @@ pub fn parse_utf8_info(bytes []u8, offset int, length int) string {
 			continue
 		}
 	}
-	if current < end - 1 {
+	if current < end {
 		unsafe {
-			ret.push_many((&u8(bytes.data)) + current, end - 1 - current)
+			ret.push_many((&u8(bytes.data)) + current, end - current)
 		}
 	}
 	ret << u8(0) // C interoperability

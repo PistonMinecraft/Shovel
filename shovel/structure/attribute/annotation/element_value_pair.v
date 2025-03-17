@@ -101,67 +101,67 @@ pub fn read_element_value(info []u8, mut offset &int, pool constant.ConstantPool
 	tag := info[*offset]
 	offset += 1
 	return match tag {
-		annotation.tag_byte {
+		tag_byte {
 			value := pool.get_integer(binary.big_endian_u16_at(info, offset))?
 			offset += 2
 			ElementValue(ConstantValue{PrimitiveType.byte, value})
 		}
-		annotation.tag_short {
+		tag_short {
 			value := pool.get_integer(binary.big_endian_u16_at(info, offset))?
 			offset += 2
 			ElementValue(ConstantValue{PrimitiveType.short, value})
 		}
-		annotation.tag_boolean {
+		tag_boolean {
 			value := pool.get_integer(binary.big_endian_u16_at(info, offset))?
 			offset += 2
 			ElementValue(ConstantValue{PrimitiveType.boolean, value})
 		}
-		annotation.tag_int {
+		tag_int {
 			value := pool.get_integer(binary.big_endian_u16_at(info, offset))?
 			offset += 2
 			ElementValue(ConstantValue{PrimitiveType.int, value})
 		}
-		annotation.tag_char {
+		tag_char {
 			value := pool.get_integer(binary.big_endian_u16_at(info, offset))?
 			offset += 2
 			ElementValue(ConstantValue{PrimitiveType.char, value})
 		}
-		annotation.tag_double {
+		tag_double {
 			value := pool.get_double(binary.big_endian_u16_at(info, offset))?
 			offset += 2
 			ElementValue(value)
 		}
-		annotation.tag_float {
+		tag_float {
 			value := pool.get_float(binary.big_endian_u16_at(info, offset))?
 			offset += 2
 			ElementValue(value)
 		}
-		annotation.tag_long {
+		tag_long {
 			value := pool.get_long(binary.big_endian_u16_at(info, offset))?
 			offset += 2
 			ElementValue(value)
 		}
-		annotation.tag_string {
+		tag_string {
 			value := pool.get_utf8(binary.big_endian_u16_at(info, offset))?
 			offset += 2
 			ElementValue(value)
 		}
-		annotation.tag_enum {
+		tag_enum {
 			type_name := pool.get_utf8(binary.big_endian_u16_at(info, offset))?
 			offset += 2
 			const_name := pool.get_utf8(binary.big_endian_u16_at(info, offset))?
 			offset += 2
 			ElementValue(EnumConstant{type_name, const_name})
 		}
-		annotation.tag_class {
+		tag_class {
 			value := pool.get_utf8(binary.big_endian_u16_at(info, offset))?
 			offset += 2
 			ElementValue(ClassInfo{value})
 		}
-		annotation.tag_annotation {
+		tag_annotation {
 			ElementValue(read_annotation(info, mut offset, pool, 0)?)
 		}
-		annotation.tag_array {
+		tag_array {
 			len := int(binary.big_endian_u16_at(info, offset))
 			offset += 2
 			ElementValue([]ElementValue{len: len, init: read_element_value(info, mut offset,

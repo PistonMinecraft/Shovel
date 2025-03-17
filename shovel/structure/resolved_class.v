@@ -258,36 +258,40 @@ pub fn resolve_class(class reader.ClassFile) !ResolvedClass {
 		}] = Method(method)
 	}
 	return ResolvedClass{
-		version: class.version
-		constant_pool: pool
-		access_flags: class.access_flags
-		this_class: pool.get_utf8(class.this_class) or { return emsg.invalid_name_index('class') }
-		super_class: pool.get_utf8(class.super_class) or { return emsg.invalid_name_index('class') }
-		interfaces: class.interfaces.map(pool.get_utf8(it) or {
+		version:                            class.version
+		constant_pool:                      pool
+		access_flags:                       class.access_flags
+		this_class:                         pool.get_utf8(class.this_class) or {
+			return emsg.invalid_name_index('class')
+		}
+		super_class:                        pool.get_utf8(class.super_class) or {
+			return emsg.invalid_name_index('class')
+		}
+		interfaces:                         class.interfaces.map(pool.get_utf8(it) or {
 			return emsg.invalid_name_index('interface')
 		})
-		raw_attributes: raw_attributes
-		source_file: source_file
-		source_debug_extension: source_debug_extension
-		inner_classes: inner_classes
-		enclosing_method: enclosing_method
-		bootstrap_methods: bootstrap_methods
-		mod: mod
-		module_packages: module_packages
-		module_main_class: module_main_class
-		nest_host: nest_host
-		nest_members: nest_members
-		record: record
-		permitted_subclasses: permitted_subclasses
-		synthetic: synthetic
-		deprecated: deprecated
-		signature: signature
-		runtime_visible_annotations: runtime_visible_annotations
-		runtime_invisible_annotations: runtime_invisible_annotations
-		runtime_visible_type_annotations: runtime_visible_type_annotations
+		raw_attributes:                     raw_attributes
+		source_file:                        source_file
+		source_debug_extension:             source_debug_extension
+		inner_classes:                      inner_classes
+		enclosing_method:                   enclosing_method
+		bootstrap_methods:                  bootstrap_methods
+		mod:                                mod
+		module_packages:                    module_packages
+		module_main_class:                  module_main_class
+		nest_host:                          nest_host
+		nest_members:                       nest_members
+		record:                             record
+		permitted_subclasses:               permitted_subclasses
+		synthetic:                          synthetic
+		deprecated:                         deprecated
+		signature:                          signature
+		runtime_visible_annotations:        runtime_visible_annotations
+		runtime_invisible_annotations:      runtime_invisible_annotations
+		runtime_visible_type_annotations:   runtime_visible_type_annotations
 		runtime_invisible_type_annotations: runtime_invisible_type_annotations
-		fields: fields
-		methods: methods
+		fields:                             fields
+		methods:                            methods
 	}
 }
 
