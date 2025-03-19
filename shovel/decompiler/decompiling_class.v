@@ -62,40 +62,40 @@ pub fn (d DecompilingClass) decompile_class(importer Importer) []u8 {
 	mut indenter := Indenter.new(builder)
 	indenter.push_indent()
 
+	mut field_builder := strings.new_builder(64)
 	for field in d.resolved.get_fields() {
 		if field is structure.ResolvedField {
 			acc := field.access_flags
 			if acc.is_public() {
-				indenter.write_string('public ')
+				field_builder.write_string('public ')
 			} else if acc.is_protected() {
-				indenter.write_string('protected ')
+				field_builder.write_string('protected ')
 			} else if acc.is_private() {
-				indenter.write_string('private ')
+				field_builder.write_string('private ')
 			}
 			if acc.is_static() {
-				indenter.write_string('static ')
+				field_builder.write_string('static ')
 			} else if acc.is_transient() {
-				indenter.write_string('transient ')
+				field_builder.write_string('transient ')
 			}
 			if acc.is_final() {
-				indenter.write_string('final ')
+				field_builder.write_string('final ')
 			} else if acc.is_volatile() {
-				indenter.write_string('volatile ')
+				field_builder.write_string('volatile ')
 			}
 			if acc.is_synthetic() {
-				indenter.write_string('/* synthetic */ ')
+				field_builder.write_string('/* synthetic */ ')
 			}
 			field_type := utils.unwrap(dutils.field_descriptor_to_java_name(field.descriptor))
-			if field.descriptor[0] == `L` {
-				indenter.write_string(field_type)
-			}
-			// indenter.write_string(field.)
+			field_builder.write_string(field_type)
+			field_builder.write_string(';')
+			indenter.writeln(field_builder.str())
 		} else {
 			panic('Field not resolved')
 		}
 	}
 
 	indenter.pop_indent()
-	builder.write_string('}')
+	builder.write_string('}\n')
 	return builder
 }

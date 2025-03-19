@@ -261,11 +261,11 @@ pub fn resolve_class(class reader.ClassFile) !ResolvedClass {
 		version:                            class.version
 		constant_pool:                      pool
 		access_flags:                       class.access_flags
-		this_class:                         pool.get_utf8(class.this_class) or {
-			return emsg.invalid_name_index('class')
+		this_class:                         pool.get_class_info_name(class.this_class) or {
+			return emsg.invalid_name_index('this_class')
 		}
-		super_class:                        pool.get_utf8(class.super_class) or {
-			return emsg.invalid_name_index('class')
+		super_class:                        pool.get_class_info_name(class.super_class) or {
+			return emsg.invalid_name_index('super_class')
 		}
 		interfaces:                         class.interfaces.map(pool.get_utf8(it) or {
 			return emsg.invalid_name_index('interface')

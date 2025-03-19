@@ -10,7 +10,7 @@ pub fn field_descriptor_to_java_name(descriptor string) ?string {
 		`J` { 'long' }
 		`S` { 'short' }
 		`Z` { 'boolean' }
-		`L` { descriptor.substr(1, descriptor.len - 1) }
+		`L` { descriptor.substr(1, descriptor.len - 1).replace_char(`/`, `.`, 1) }
 		else { none }
 	}
 }

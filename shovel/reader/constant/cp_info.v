@@ -77,7 +77,7 @@ pub type Entry = ConstantClassInfo
 
 pub fn (e Entry) is_loadable() bool {
 	return match e {
-		int, f32, i64, f64, string, ConstantClassInfo, ConstantMethodHandleInfo,
+		int, f32, i64, f64, ConstantStringInfo, ConstantClassInfo, ConstantMethodHandleInfo,
 		ConstantMethodTypeInfo, ConstantDynamicInfo {
 			true
 		}

@@ -10,6 +10,7 @@ fn main() {
 	println(version.MajorVersion.from('v23')!)
 	println(int(u32(3147483647)))
 	println('Hello world')
-	mut class_map := structure.ClassMap.new([reader.read(os.read_bytes('MinecraftDecompilerCommandLine.class')!)!], [])
+	cls := reader.read(os.read_bytes('MinecraftDecompilerCommandLine.class')!)!
+	mut class_map := structure.ClassMap.new([cls], [])
 	decompiler.decompile(mut class_map)
 }
