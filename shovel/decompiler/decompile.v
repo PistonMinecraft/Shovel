@@ -15,8 +15,7 @@ pub fn decompile_class(mut class structure.ResolvedClass, m structure.ClassMap) 
 	mut buf := strings.new_builder(1024)
 
 	if dc.package != none { // inside a package
-		buf.writeln('package ${utils.unwrap(dc.package)};')
-		buf.write_u8(`\n`)
+		buf.writeln('package ${utils.unwrap(dc.package)};\n')
 	}
 
 	importer := Importer.new()

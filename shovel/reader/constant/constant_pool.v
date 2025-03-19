@@ -57,6 +57,10 @@ pub fn (pool ConstantPool) get_class_info(index u16) ?ConstantClassInfo {
 	return if entry is ConstantClassInfo { entry } else { none }
 }
 
+pub fn (pool ConstantPool) get_class_info_name(index u16) ?string {
+	return pool.get_utf8(pool.get_class_info(index)?)
+}
+
 pub fn (pool ConstantPool) get_name_and_type_info(index u16) ?ConstantNameAndTypeInfo {
 	entry := pool.entries[index]
 	return if entry is ConstantNameAndTypeInfo { entry } else { none }

@@ -39,6 +39,7 @@ pub fn read_bootstrap_methods(info []u8, pool constant.ConstantPool) ?[]Bootstra
 	mut ret := []BootstrapMethod{cap: int(binary.big_endian_u16(info))}
 	unsafe { ret.flags.set(.nogrow) }
 	for i := 2; i < info.len; i += 2 {
+		println('????????wtf${binary.big_endian_u16_at(info, i)}')
 		bootstrap_method_ref := pool.get_method_handle_info(binary.big_endian_u16_at(info,
 			i))?
 		num_bootstrap_arguments := int(binary.big_endian_u16_at(info, i + 2))
