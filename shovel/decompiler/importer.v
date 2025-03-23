@@ -42,9 +42,11 @@ pub fn (mut i Importer) add_import(dc DecompilingClass, importing string) !strin
 // collect_imports collect all the imports
 pub fn (i &Importer) collect_imports(mut builder strings.Builder) {
 	mut values := i.imported.values()
-	values.sort()
-	for v in values {
-		builder.writeln('import ${v};')
+	if values.len > 0 {
+		values.sort()
+		for v in values {
+			builder.writeln('import ${v};')
+		}
+		builder.write_u8(`\n`)
 	}
-	builder.write_u8(`\n`)
 }

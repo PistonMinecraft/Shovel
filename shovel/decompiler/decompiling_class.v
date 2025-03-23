@@ -62,36 +62,95 @@ pub fn (d DecompilingClass) decompile_class(importer Importer) []u8 {
 	mut indenter := Indenter.new(builder)
 	indenter.push_indent()
 
-	mut field_builder := strings.new_builder(64)
+	mut member_builder := strings.new_builder(64)
 	for field in d.resolved.get_fields() {
 		if field is structure.ResolvedField {
 			acc := field.access_flags
 			if acc.is_public() {
-				field_builder.write_string('public ')
+				member_builder.write_string('public ')
 			} else if acc.is_protected() {
-				field_builder.write_string('protected ')
+				member_builder.write_string('protected ')
 			} else if acc.is_private() {
-				field_builder.write_string('private ')
+				member_builder.write_string('private ')
 			}
 			if acc.is_static() {
-				field_builder.write_string('static ')
+				member_builder.write_string('static ')
 			} else if acc.is_transient() {
-				field_builder.write_string('transient ')
+				member_builder.write_string('transient ')
 			}
 			if acc.is_final() {
-				field_builder.write_string('final ')
+				member_builder.write_string('final ')
 			} else if acc.is_volatile() {
-				field_builder.write_string('volatile ')
+				member_builder.write_string('volatile ')
 			}
 			if acc.is_synthetic() {
-				field_builder.write_string('/* synthetic */ ')
+				member_builder.write_string('/* synthetic */ ')
 			}
 			field_type := utils.unwrap(dutils.field_descriptor_to_java_name(field.descriptor))
-			field_builder.write_string(field_type)
-			field_builder.write_string(';')
-			indenter.writeln(field_builder.str())
+			member_builder.write_string(field_type)
+			member_builder.write_u8(` `)
+			member_builder.write_string(field.name)
+			member_builder.write_string(';')
+			indenter.writeln_builder(mut member_builder)
 		} else {
 			panic('Field not resolved')
+		}
+	}
+
+	for _, method_map in d.resolved.methods {
+		for _, method in method_map {
+			if method is structure.ResolvedMethod {
+				acc := method.access_flags
+				if acc.is_public() {
+					member_builder.write_string('public ')
+				} else if acc.is_protected() {
+					member_builder.write_string('protected ')
+				} else if acc.is_private() {
+					member_builder.write_string('private ')
+				}
+				if acc.is_synchronized() {
+					member_builder.write_string('synchronized ')
+				}
+				if acc.is_static() {
+					member_builder.write_string('static ')
+				} else if acc.is_abstract() {
+					member_builder.write_string('abstract ')
+				}
+				if acc.is_final() {
+					member_builder.write_string('final ')
+				}
+				if acc.is_native() {
+					member_builder.write_string('native ')
+				}
+				if acc.is_synthetic() {
+					member_builder.write_string('/* synthetic */ ')
+				}
+				if acc.is_bridge() {
+					member_builder.write_string('/* bridge */ ')
+				}
+				if acc.is_strict() {
+					member_builder.write_string('strictfp ')
+				}
+				ret, args := dutils.method_descriptor_to_java_name_array(method.descriptor)
+				member_builder.write_string(ret)
+				member_builder.write_u8(` `)
+				member_builder.write_string(method.name)
+				member_builder.write_u8(`(`)
+				member_builder.write_string(args.join(', '))
+				member_builder.write_u8(`)`)
+				if acc.is_abstract() {
+					member_builder.write_u8(`;`)
+					indenter.writeln_builder(mut member_builder)
+				} else {
+					member_builder.write_string(' {')
+					indenter.writeln_builder(mut member_builder)
+
+					indenter.writeln('}')
+				}
+
+			} else {
+				panic('Method not resolved')
+			}
 		}
 	}
 

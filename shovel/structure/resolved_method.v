@@ -9,7 +9,8 @@ import shovel.structure.attribute
 import shovel.structure.emsg
 
 @[heap]
-pub struct ResolvedMethod { // method_info
+pub struct ResolvedMethod {
+pub:
 	access_flags reader.MethodAccessFlag @[required]
 	name         string                  @[required]
 	descriptor   string                  @[required]

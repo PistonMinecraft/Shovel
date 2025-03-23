@@ -42,7 +42,7 @@ pub:
 	runtime_invisible_annotations      ?[]annotation.Annotation
 	runtime_visible_type_annotations   ?[]annotation.TypeAnnotation
 	runtime_invisible_type_annotations ?[]annotation.TypeAnnotation
-mut:
+pub mut:
 	fields  map[string]Field             @[required]
 	methods map[string]map[string]Method @[required]
 }
