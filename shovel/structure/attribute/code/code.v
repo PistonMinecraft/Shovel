@@ -104,39 +104,35 @@ pub fn read_code(info []u8, pool constant.ConstantPool) !Code {
 			match attr_name {
 				reader.attr_line_number_table {
 					line_number_table << []LineNumber{len: int(binary.big_endian_u16(attr.info)), init: LineNumber{
-							start_pc:    binary.big_endian_u16_at(attr.info, 2 + index * 4)
-							line_number: binary.big_endian_u16_at(attr.info, 4 + index * 4)
-						}}
+						start_pc:    binary.big_endian_u16_at(attr.info, 2 + index * 4)
+						line_number: binary.big_endian_u16_at(attr.info, 4 + index * 4)
+					}}
 				}
 				reader.attr_local_variable_table {
 					local_variable_table << []LocalVariable{len: int(binary.big_endian_u16(attr.info)), init: LocalVariable{
-							start_pc:   binary.big_endian_u16_at(attr.info, 2 + index * 10)
-							length:     binary.big_endian_u16_at(attr.info, 4 + index * 10)
-							name:       pool.get_utf8(binary.big_endian_u16_at(attr.info,
-								6 + index * 10)) or {
-								return error('local variable name is absent')
-							}
-							descriptor: pool.get_utf8(binary.big_endian_u16_at(attr.info,
-								8 + index * 10)) or {
-								return error('local variable descriptor is absent')
-							}
-							index:      binary.big_endian_u16_at(attr.info, 10 + index * 10)
-						}}
+						start_pc:   binary.big_endian_u16_at(attr.info, 2 + index * 10)
+						length:     binary.big_endian_u16_at(attr.info, 4 + index * 10)
+						name:       pool.get_utf8(binary.big_endian_u16_at(attr.info,
+							6 + index * 10)) or { return error('local variable name is absent') }
+						descriptor: pool.get_utf8(binary.big_endian_u16_at(attr.info,
+							8 + index * 10)) or {
+							return error('local variable descriptor is absent')
+						}
+						index:      binary.big_endian_u16_at(attr.info, 10 + index * 10)
+					}}
 				}
 				reader.attr_local_variable_type_table {
 					local_variable_type_table << []LocalVariableType{len: int(binary.big_endian_u16(attr.info)), init: LocalVariableType{
-							start_pc:  binary.big_endian_u16_at(attr.info, 2 + index * 10)
-							length:    binary.big_endian_u16_at(attr.info, 4 + index * 10)
-							name:      pool.get_utf8(binary.big_endian_u16_at(attr.info,
-								6 + index * 10)) or {
-								return error('local variable type name is absent')
-							}
-							signature: pool.get_utf8(binary.big_endian_u16_at(attr.info,
-								8 + index * 10)) or {
-								return error('local variable type signature is absent')
-							}
-							index:     binary.big_endian_u16_at(attr.info, 10 + index * 10)
-						}}
+						start_pc:  binary.big_endian_u16_at(attr.info, 2 + index * 10)
+						length:    binary.big_endian_u16_at(attr.info, 4 + index * 10)
+						name:      pool.get_utf8(binary.big_endian_u16_at(attr.info, 6 + index * 10)) or {
+							return error('local variable type name is absent')
+						}
+						signature: pool.get_utf8(binary.big_endian_u16_at(attr.info, 8 + index * 10)) or {
+							return error('local variable type signature is absent')
+						}
+						index:     binary.big_endian_u16_at(attr.info, 10 + index * 10)
+					}}
 				}
 				reader.attr_stack_map_table {
 					if stack_map_table == none {

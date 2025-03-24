@@ -147,7 +147,6 @@ pub fn (d DecompilingClass) decompile_class(importer Importer) []u8 {
 
 					indenter.writeln('}')
 				}
-
 			} else {
 				panic('Method not resolved')
 			}
