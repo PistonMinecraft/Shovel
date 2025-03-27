@@ -136,7 +136,14 @@ pub fn (d DecompilingClass) decompile_class(importer Importer) []u8 {
 				member_builder.write_u8(` `)
 				member_builder.write_string(method.name)
 				member_builder.write_u8(`(`)
-				member_builder.write_string(args.join(', '))
+				for i, arg in args {
+					member_builder.write_string(arg)
+					member_builder.write_u8(` `)// TODO
+					member_builder.write_string(method.code or { panic('No Code attribute') }.local_variable_table[if acc.is_static() { i } else { i + 1 }].name)
+					if i != args.len - 1 {
+						member_builder.write_string(', ')
+					}
+				}
 				member_builder.write_u8(`)`)
 				if acc.is_abstract() {
 					member_builder.write_u8(`;`)

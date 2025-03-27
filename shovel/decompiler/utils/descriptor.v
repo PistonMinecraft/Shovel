@@ -35,10 +35,7 @@ fn descriptor_to_java_name(desc string, i int, allow_void bool, end bool) ?(stri
 			'boolean', i
 		}
 		`L` {
-			len := desc.len
-			println(len)
 			end_index := if end { desc.len - 1 } else { desc.index_after(';', i + 2)? }
-			println(len)
 			desc.substr(i + 1, end_index).replace_char(`/`, `.`, 1), end_index
 		}
 		`V` {

@@ -3,6 +3,7 @@ module code
 import shovel.reader.constant
 
 pub struct ExceptionTableEntry {
+pub:
 	start_pc   u16
 	end_pc     u16
 	handler_pc u16
@@ -10,11 +11,13 @@ pub struct ExceptionTableEntry {
 }
 
 pub struct LineNumber {
+pub:
 	start_pc    u16
 	line_number u16
 }
 
 pub struct LocalVariable {
+pub:
 	start_pc   u16
 	length     u16
 	name       string
@@ -23,6 +26,7 @@ pub struct LocalVariable {
 }
 
 pub struct LocalVariableType {
+pub:
 	start_pc  u16
 	length    u16
 	name      string
